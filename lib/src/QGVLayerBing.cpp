@@ -22,7 +22,7 @@
 
 namespace {
 // clang-format off
-const QMap<QGV::TilesType, QStringList> URLTemplates = {
+const QHash<QGV::TilesType, QStringList> URLTemplates = {
     { QGV::TilesType::Satellite, {
           "http://t0.tiles.virtualearth.net/tiles/a${qk}.jpeg?g=181&mkt=${lcl}",
           "http://t1.tiles.virtualearth.net/tiles/a${qk}.jpeg?g=181&mkt=${lcl}",
@@ -76,7 +76,7 @@ QLocale QGVLayerBing::getLocale() const
 void QGVLayerBing::createName()
 {
     // clang-format off
-    const QMap<QGV::TilesType, QString> adapter = {
+    const QHash<QGV::TilesType, QString> adapter = {
         { QGV::TilesType::Satellite, "QGV::Satellite" },
         { QGV::TilesType::Schema, "QGV::Schema" },
         { QGV::TilesType::Hybrid, "QGV::Hybrid" },

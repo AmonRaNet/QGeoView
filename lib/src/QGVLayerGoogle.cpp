@@ -21,8 +21,9 @@
 #include <QtMath>
 
 namespace {
+
 // clang-format off
-const QMap<QGV::TilesType, QStringList> URLTemplates = {
+const QHash<QGV::TilesType, QStringList> URLTemplates = {
     {QGV::TilesType::Satellite, {
          "https://mts0.google.com/vt/lyrs=s@186112443&hl=${lcl}&x=${x}&y=${y}&z=${z}&s=Galile",
          "https://mts1.google.com/vt/lyrs=s@186112443&hl=${lcl}&x=${x}&y=${y}&z=${z}&s=Galile",
@@ -79,7 +80,7 @@ QLocale QGVLayerGoogle::getLocale() const
 void QGVLayerGoogle::createName()
 {
     // clang-format off
-    const QMap<QGV::TilesType, QString> adapter = {
+    const QHash<QGV::TilesType, QString> adapter = {
         { QGV::TilesType::Satellite, "QGV::Satellite" },
         { QGV::TilesType::Schema, "QGV::Schema" },
         { QGV::TilesType::Hybrid, "QGV::Hybrid" },

@@ -58,7 +58,7 @@ void WaveAnimation::updateCurrentTime(int currentTime)
 
 void WaveAnimation::prepareWaves()
 {
-    QMap<int, QList<QGVDrawItem*>> waves;
+    QHash<int, QList<QGVDrawItem*>> waves;
     for (int index = 0; index < mLayer->countItems(); index++) {
         auto* drawItem = dynamic_cast<QGVDrawItem*>(mLayer->getItem(index));
         if (drawItem == nullptr) {

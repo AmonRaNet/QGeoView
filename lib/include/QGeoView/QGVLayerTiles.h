@@ -55,6 +55,6 @@ private:
 private:
     int mCurZoom;
     QRect mCurRect;
-    QMap<int, QMap<QGV::GeoTilePos, QGVDrawItem*>> mIndex;
+    QHash<int, QMap<QGV::GeoTilePos, QGVDrawItem*>> mIndex;
     QElapsedTimer mLastAnimation;
 };

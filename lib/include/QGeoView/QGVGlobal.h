@@ -44,6 +44,11 @@ enum class TilesType
     Hybrid,
 };
 
+inline uint qHash(const QGV::TilesType& key, uint seed)
+{
+    return ::qHash(static_cast<uint>(key), seed);
+}
+
 enum class MapState
 {
     Idle,
