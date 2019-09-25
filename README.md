@@ -51,7 +51,8 @@ doxygen
 
 ### Demo
 
-Please use demo example to see all QGeoView features:
+You can see here small video: [QGeoView Demo](https://youtu.be/t0D21r_s-8E)
+or use demo example to see all QGeoView features:
 
 ```
 <build-dir>/qgeoview-demo
