@@ -68,6 +68,6 @@ QGeoView uses [SemVer](http://semver.org/) for versioning. For the versions avai
 
 ## License
 
-This project is licensed under the [GPL License](http://www.gnu.org/licenses/).
+This project is licensed under the [LGPL License v3](http://www.gnu.org/licenses/).
 
 Please contact the author if you need development with closed source.
