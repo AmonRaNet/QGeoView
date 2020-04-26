@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2019 Andrey Yaroshenko.
+ * Copyright (C) 2018-2020 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -96,8 +96,9 @@ MainWindow::MainWindow()
 
     auto actImage = new QAction("Copy as image", this);
     ui->geoMap->addAction(actImage);
-    connect(actImage, &QAction::triggered, actPosition,
-            [this]() { QGuiApplication::clipboard()->setImage(ui->geoMap->grabMapView(true).toImage()); });
+    connect(actImage, &QAction::triggered, actPosition, [this]() {
+        QGuiApplication::clipboard()->setImage(ui->geoMap->grabMapView(true).toImage());
+    });
 
     QMetaObject::invokeMethod(this, "init", Qt::QueuedConnection);
 }

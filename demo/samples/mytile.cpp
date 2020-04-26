@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2019 Andrey Yaroshenko.
+ * Copyright (C) 2018-2020 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,8 +25,7 @@
 MyTile::MyTile(const QGV::GeoTilePos& tilePos, QColor color)
     : mTilePos(tilePos)
     , mColor(color)
-{
-}
+{}
 
 void MyTile::onProjection(QGVMap* geoMap)
 {

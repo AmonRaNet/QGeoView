@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2019 Andrey Yaroshenko.
+ * Copyright (C) 2018-2020 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -34,8 +34,7 @@ namespace QGV {
 GeoPos::GeoPos()
     : mLat(0)
     , mLon(0)
-{
-}
+{}
 
 GeoPos::GeoPos(double lat, double lon)
 {
@@ -46,14 +45,12 @@ GeoPos::GeoPos(double lat, double lon)
 GeoPos::GeoPos(const GeoPos& other)
     : mLat(other.latitude())
     , mLon(other.longitude())
-{
-}
+{}
 
 GeoPos::GeoPos(const GeoPos&& other)
     : mLat(std::move(other.latitude()))
     , mLon(std::move(other.longitude()))
-{
-}
+{}
 
 GeoPos& GeoPos::operator=(const GeoPos& other)
 {
@@ -176,8 +173,7 @@ QString GeoPos::latToString(double lat, const QString& format)
 }
 
 GeoRect::GeoRect()
-{
-}
+{}
 
 GeoRect::GeoRect(double lat1, double lon1, double lat2, double lon2)
 {
@@ -194,14 +190,12 @@ GeoRect::GeoRect(GeoPos const& pos1, GeoPos const& pos2)
 GeoRect::GeoRect(const GeoRect& other)
     : mTopLeft(other.mTopLeft)
     , mBottomRight(other.mBottomRight)
-{
-}
+{}
 
 GeoRect::GeoRect(const GeoRect&& other)
     : mTopLeft(std::move(other.mTopLeft))
     , mBottomRight(std::move(other.mBottomRight))
-{
-}
+{}
 
 GeoRect& GeoRect::operator=(const GeoRect& other)
 {
@@ -278,26 +272,22 @@ bool GeoRect::intersects(const GeoRect& rect) const
 
 GeoTilePos::GeoTilePos()
     : mZoom(-1)
-{
-}
+{}
 
 GeoTilePos::GeoTilePos(int zoom, const QPoint& pos)
     : mZoom(zoom)
     , mPos(pos)
-{
-}
+{}
 
 GeoTilePos::GeoTilePos(const GeoTilePos& other)
     : mZoom(other.mZoom)
     , mPos(other.mPos)
-{
-}
+{}
 
 GeoTilePos::GeoTilePos(const GeoTilePos&& other)
     : mZoom(std::move(other.mZoom))
     , mPos(std::move(other.mPos))
-{
-}
+{}
 
 GeoTilePos& GeoTilePos::operator=(const GeoTilePos& other)
 {

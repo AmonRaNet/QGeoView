@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2019 Andrey Yaroshenko.
+ * Copyright (C) 2018-2020 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,8 +23,7 @@
 
 FlagsDemo::FlagsDemo(QGVMap* geoMap, QObject* parent)
     : DemoItem(geoMap, SelectorDialog::Multi, parent)
-{
-}
+{}
 
 QString FlagsDemo::label() const
 {
@@ -56,8 +55,8 @@ void FlagsDemo::onInit()
         { "Ignore scale(red)", new Rectangle(randRect(target, 40), QGV::ItemFlag::IgnoreScale, Qt::red) },
         { "Highlightable(green)", new Rectangle(randRect(target, size), QGV::ItemFlag::Highlightable, Qt::green) },
         { "Highlightable-custom(gray)",
-          new Rectangle(randRect(target, size), QGV::ItemFlag::Highlightable | QGV::ItemFlag::HighlightCustom,
-                        Qt::gray) },
+          new Rectangle(
+                  randRect(target, size), QGV::ItemFlag::Highlightable | QGV::ItemFlag::HighlightCustom, Qt::gray) },
         { "Custom selectable(cyan)", new Rectangle(randRect(target, size), QGV::ItemFlag::SelectCustom, Qt::cyan) },
         { "Clickable by mouse(magenta)", new Rectangle(randRect(target, size), QGV::ItemFlag::Clickable, Qt::magenta) },
         { "Custom transform(yellow)", new Rectangle(randRect(target, size), QGV::ItemFlag::Transformed, Qt::yellow) },

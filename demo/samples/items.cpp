@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2019 Andrey Yaroshenko.
+ * Copyright (C) 2018-2020 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,8 +21,7 @@
 
 ItemsDemo::ItemsDemo(QGVMap* geoMap, QObject* parent)
     : DemoItem(geoMap, SelectorDialog::Multi, parent)
-{
-}
+{}
 
 QString ItemsDemo::label() const
 {
@@ -46,7 +45,9 @@ void ItemsDemo::onInit()
      * List of demo color layers.
      */
     const QList<QPair<QString, QColor>> colors = {
-        { "Blue Layer", Qt::blue }, { "Red Layer", Qt::red }, { "Green Layer", Qt::green },
+        { "Blue Layer", Qt::blue },
+        { "Red Layer", Qt::red },
+        { "Green Layer", Qt::green },
     };
     /*
      * Layers will be owned by map.

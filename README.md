@@ -22,6 +22,7 @@ What things you need:
  * Qt 5.6 or higher (core, gui, widgets, network)
  * qmake or cmake
  * doxygen (optional)
+ * pre-commits (optional) https://pre-commit.com/
 
 ### Installing
 

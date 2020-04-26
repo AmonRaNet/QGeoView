@@ -1,12 +1,26 @@
+#!/usr/bin/env python3
+
 import sys
 import argparse
 import os
 import re
 
-target_head = b''
+line_ending= b'\n'
 
-def replace(file_path):
-    global target_head
+def read_file(file_path):
+    print("read file %s" % file_path)
+    fw = open(file_path, 'rb')
+    return fw.read()
+
+def write_file(file_path, body):
+    fw = open(file_path, 'wb')
+    fw.write(body)
+    print("update file %s" % file_path)
+
+def compare_body(origin_body, target_body):
+    return origin_body == target_body
+
+def replace(file_path, target_head):
     head_start = False
     head_end = False
     first_line = False
@@ -24,7 +38,7 @@ def replace(file_path):
                     head_end = True
             # Detect end line in head
             if head_start and not head_end:
-                head_end = re.match(r'^\s+\*\*\*+\/', lineStr)
+                head_end = re.match(r'^\s*\*\*\*+\/', lineStr)
                 continue
             # Wait first line in body
             if not first_line:
@@ -34,41 +48,37 @@ def replace(file_path):
             # Add line by line
             body += lineBin
     # Output with head and body
-    output = target_head + b'\r\n' + body
-    # CRLF in text
-    output = output.replace(b'\r\n', b'\n')
-    output = output.replace(b'\n', b'\r\n')
-    # Write file
-    fw = open(file_path, 'wb')
-    fw.write(output)
-    print("replaced")
+    output = target_head + line_ending + body
+    return output
 
-def load_target_head(file_path):
-    global target_head
-    fr = open(file_path, 'rb')
-    target_head = fr.read()
-    # CRLF in text
-    target_head = target_head.replace(b'\r\n', b'\n')
-    target_head = target_head.replace(b'\n', b'\r\n')
-
-def replace_in_path(path):
-    print(path)
+def replace_in_path(path, head_file, apply_needed):
+    result = 0
+    target_head = read_file(head_file)
+    print("search files in %s" % path)
     for root, dirs, files in os.walk(path):
         for file in files:
             if (file.endswith('.h') or file.endswith('.cpp')) and \
                 not file.startswith('moc') and \
                 not 'build/' in root :
-                    fullname = root + "/" + file
-                    print(fullname)
-                    replace(fullname)
+                    file_path = root + "/" + file
+                    origin_body = read_file(file_path)
+                    target_body = replace(file_path, target_head)
+                    if not compare_body(origin_body, target_body):
+                        print("HEAD DIFFER IN %s" % file_path)
+                        result = 1
+                        if apply_needed:
+                            write_file(file_path, target_body)
+    return result
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("path", help="path to project")
-    parser.add_argument("head", help="path to head file")
+    parser.add_argument("head_file", help="path to head file")
+    parser.add_argument('--apply', action='store_true')
     args = parser.parse_args()
-    load_target_head(args.head)
-    replace_in_path(args.path)
+    print("Replace in '%s' Target head file '%s'" % (args.path, args.head_file))
+    print(args)
+    return replace_in_path(args.path, args.head_file, args.apply)
 
 if __name__ == "__main__":
     sys.exit(main())

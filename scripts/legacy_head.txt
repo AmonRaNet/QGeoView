@@ -15,27 +15,3 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, see https://www.gnu.org/licenses.
  ****************************************************************************/
-
-#pragma once
-
-#include "demoitem.h"
-
-#include <QGeoView/QGVLayer.h>
-
-class ItemsDemo : public DemoItem
-{
-    Q_OBJECT
-
-public:
-    explicit ItemsDemo(QGVMap* geoMap, QObject* parent = 0);
-
-    QString label() const override;
-    QString comment() const override;
-
-private:
-    void onInit() override;
-    void onStart() override;
-    void onEnd() override;
-    QGV::GeoRect targetArea() const;
-    void setSelected(QGVLayer* layer, bool selected);
-};

@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2019 Andrey Yaroshenko.
+ * Copyright (C) 2018-2020 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -37,8 +37,7 @@ QGVCameraState::QGVCameraState(const QGVCameraState& other)
     , mAzimuth(other.mAzimuth)
     , mProjRect(other.mProjRect)
     , mAnimation(other.mAnimation)
-{
-}
+{}
 
 QGVCameraState::QGVCameraState(const QGVCameraState&& other)
     : mGeoMap(std::move(other.mGeoMap))
@@ -46,8 +45,7 @@ QGVCameraState::QGVCameraState(const QGVCameraState&& other)
     , mAzimuth(std::move(other.mAzimuth))
     , mProjRect(std::move(other.mProjRect))
     , mAnimation(std::move(other.mAnimation))
-{
-}
+{}
 
 QGVCameraState& QGVCameraState::operator=(const QGVCameraState& other)
 {
@@ -126,8 +124,7 @@ QGVCameraActions::QGVCameraActions(const QGVCameraActions& other)
     , mScale(other.mScale)
     , mAzimuth(other.mAzimuth)
     , mProjCenter(other.mProjCenter)
-{
-}
+{}
 
 const QGVCameraState& QGVCameraActions::origin() const
 {
@@ -224,8 +221,7 @@ QGVCameraAnimation::QGVCameraAnimation(const QGVCameraActions& actions, QObject*
     : QAbstractAnimation(parent)
     , mDuration(1000)
     , mActions(actions)
-{
-}
+{}
 
 void QGVCameraAnimation::setDuration(int msecs)
 {
@@ -243,12 +239,10 @@ QGVCameraActions& QGVCameraAnimation::actions()
 }
 
 void QGVCameraAnimation::onStart()
-{
-}
+{}
 
 void QGVCameraAnimation::onStop()
-{
-}
+{}
 
 double QGVCameraAnimation::interpolateScale(double from, double to, double progress)
 {
@@ -316,8 +310,7 @@ void QGVCameraAnimation::onStateChanged(QGV::MapState state)
 QGVCameraSimpleAnimation::QGVCameraSimpleAnimation(const QGVCameraActions& actions, QObject* parent)
     : QGVCameraAnimation(actions, parent)
     , mEasing(QEasingCurve::Linear)
-{
-}
+{}
 
 void QGVCameraSimpleAnimation::setEasingCurve(const QEasingCurve& easing)
 {
