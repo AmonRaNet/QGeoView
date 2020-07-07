@@ -36,7 +36,7 @@ public:
   }
 
 public slots:
-  void  request(QString url, QGV::GeoTilePos &tilePos)
+  void  request(QString url, QGV::GeoTilePos tilePos)
   {
     if (QFile::exists(url))
     {
