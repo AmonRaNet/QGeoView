@@ -26,335 +26,399 @@
 #include <QMouseEvent>
 #include <QVBoxLayout>
 
-class RootItem : public QGVItem
+class RootItem: public QGVItem
 {
 public:
-    explicit RootItem(QGVMap* geoMap)
-        : mGeoMap(geoMap)
-    {}
-    virtual ~RootItem();
+  explicit RootItem(QGVMap *geoMap):
+    mGeoMap(geoMap)
+  {
+  }
 
-    QGVMap* getMap() const override final
-    {
-        return mGeoMap;
-    }
+  virtual ~RootItem();
+
+  QGVMap* getMap() const override final
+  {
+    return mGeoMap;
+  }
 
 private:
-    QGVMap* mGeoMap;
+  QGVMap *mGeoMap;
 };
+
 RootItem::~RootItem() = default;
 
-QGVMap::QGVMap(QWidget* parent)
-    : QWidget(parent)
+QGVMap::QGVMap(QWidget *parent):
+  QWidget(parent)
 {
-    mProjection.reset(new QGVProjectionEPSG3857());
-    mQGView.reset(new QGVMapQGView(this));
-    mRootItem.reset(new RootItem(this));
-    setLayout(new QVBoxLayout(this));
-    layout()->addWidget(mQGView.data());
-    refreshProjection();
+  mProjection.reset(new QGVProjectionEPSG3857());
+  mQGView.reset(new QGVMapQGView(this));
+  mRootItem.reset(new RootItem(this));
+  setLayout(new QVBoxLayout(this));
+  layout()->addWidget(mQGView.data());
+  refreshProjection();
 }
 
 QGVMap::~QGVMap()
 {
-    deleteItems();
-    deleteWidgets();
+  deleteItems();
+  deleteWidgets();
 }
 
-const QGVCameraState QGVMap::getCamera() const
+const QGVCameraState  QGVMap::getCamera() const
 {
-    return geoView()->getCamera();
+  return geoView()->getCamera();
 }
 
-void QGVMap::cameraTo(const QGVCameraActions& actions, bool animation)
+void  QGVMap::cameraTo(const QGVCameraActions &actions, bool animation)
 {
-    geoView()->cameraTo(actions, animation);
+  geoView()->cameraTo(actions, animation);
 }
 
-void QGVMap::flyTo(const QGVCameraActions& actions)
+void  QGVMap::flyTo(const QGVCameraActions &actions)
 {
-    geoView()->cleanState();
-    auto* fly = new QGVCameraFlyAnimation(actions);
-    fly->start(QAbstractAnimation::DeleteWhenStopped);
+  geoView()->cleanState();
+  auto *fly = new QGVCameraFlyAnimation(actions);
+  fly->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void QGVMap::setProjection(QGV::Projection id)
+void  QGVMap::setProjection(QGV::Projection id)
 {
-    mProjection.reset(nullptr);
-    switch (id) {
-        case QGV::Projection::EPSG3857:
-            setProjection(new QGVProjectionEPSG3857());
-            break;
-    }
+  mProjection.reset(nullptr);
+
+  switch (id)
+  {
+  case QGV::Projection::EPSG3857:
+    setProjection(new QGVProjectionEPSG3857());
+    break;
+  }
 }
 
-void QGVMap::setProjection(QGVProjection* projection)
+void  QGVMap::setProjection(QGVProjection *projection)
 {
-    Q_ASSERT(projection);
-    mProjection.reset(projection);
-    refreshProjection();
-    Q_EMIT projectionChanged();
+  Q_ASSERT(projection);
+  mProjection.reset(projection);
+  refreshProjection();
+  Q_EMIT projectionChanged();
 }
 
-QGVProjection* QGVMap::getProjection() const
+QGVProjection * QGVMap::getProjection() const
 {
-    return mProjection.data();
+  return mProjection.data();
 }
 
-void QGVMap::setMouseActions(QGV::MouseActions actions)
+void  QGVMap::setMouseActions(QGV::MouseActions actions)
 {
-    geoView()->setMouseActions(actions);
+  geoView()->setMouseActions(actions);
 }
 
-void QGVMap::setMouseAction(QGV::MouseAction action, bool enabled)
+void  QGVMap::setMouseAction(QGV::MouseAction action, bool enabled)
 {
-    QGV::MouseActions newActions = getMouseActions();
-    if (enabled)
-        newActions |= action;
-    else
-        newActions &= ~static_cast<int>(action);
-    setMouseActions(newActions);
+  QGV::MouseActions  newActions = getMouseActions();
+
+  if (enabled)
+  {
+    newActions |= action;
+  }
+  else
+  {
+    newActions &= ~static_cast<int>(action);
+  }
+
+  setMouseActions(newActions);
 }
 
-QGV::MouseActions QGVMap::getMouseActions() const
+QGV::MouseActions  QGVMap::getMouseActions() const
 {
-    return geoView()->getMouseActions();
+  return geoView()->getMouseActions();
 }
 
-bool QGVMap::isMouseAction(QGV::MouseAction action) const
+bool  QGVMap::isMouseAction(QGV::MouseAction action) const
 {
-    return getMouseActions().testFlag(action);
+  return getMouseActions().testFlag(action);
 }
 
-QGVItem* QGVMap::rootItem() const
+QGVItem * QGVMap::rootItem() const
 {
-    return mRootItem.data();
+  return mRootItem.data();
 }
 
-QGVMapQGView* QGVMap::geoView() const
+QGVMapQGView * QGVMap::geoView() const
 {
-    return mQGView.data();
+  return mQGView.data();
 }
 
-void QGVMap::addItem(QGVItem* item)
+void  QGVMap::addItem(QGVItem *item)
 {
-    Q_ASSERT(item);
-    mRootItem->addItem(item);
+  Q_ASSERT(item);
+  mRootItem->addItem(item);
 }
 
-void QGVMap::removeItem(QGVItem* item)
+void  QGVMap::removeItem(QGVItem *item)
 {
-    Q_ASSERT(item);
-    mRootItem->removeItem(item);
+  Q_ASSERT(item);
+  mRootItem->removeItem(item);
 }
 
-void QGVMap::deleteItems()
+void  QGVMap::deleteItems()
 {
-    mRootItem->deleteItems();
+  mRootItem->deleteItems();
 }
 
-int QGVMap::countItems() const
+int  QGVMap::countItems() const
 {
-    return mRootItem->countItems();
+  return mRootItem->countItems();
 }
 
-QGVItem* QGVMap::getItem(int index) const
+QGVItem * QGVMap::getItem(int index) const
 {
-    return mRootItem->getItem(index);
+  return mRootItem->getItem(index);
 }
 
-void QGVMap::addWidget(QGVWidget* widget)
+void  QGVMap::addWidget(QGVWidget *widget)
 {
-    Q_ASSERT(widget);
-    if (widget->getMap() != nullptr && widget->getMap() != this) {
-        widget->getMap()->removeWidget(widget);
-    }
+  Q_ASSERT(widget);
 
-    mWidgets.append(widget);
-    widget->setMap(this);
-    widget->show();
+  if ((widget->getMap() != nullptr) && (widget->getMap() != this))
+  {
+    widget->getMap()->removeWidget(widget);
+  }
+
+  mWidgets.append(widget);
+  widget->setMap(this);
+  widget->show();
 }
 
-void QGVMap::removeWidget(QGVWidget* widget)
+void  QGVMap::removeWidget(QGVWidget *widget)
 {
-    if (!mWidgets.contains(widget))
-        return;
+  if (!mWidgets.contains(widget))
+  {
+    return;
+  }
 
-    mWidgets.removeAll(widget);
-    widget->setMap(nullptr);
+  mWidgets.removeAll(widget);
+  widget->setMap(nullptr);
 }
 
-void QGVMap::deleteWidgets()
+void  QGVMap::deleteWidgets()
 {
-    auto copy = mWidgets;
-    qDeleteAll(copy.begin(), copy.end());
-    mWidgets.clear();
+  auto  copy = mWidgets;
+
+  qDeleteAll(copy.begin(), copy.end());
+  mWidgets.clear();
 }
 
-int QGVMap::countWidgets() const
+int  QGVMap::countWidgets() const
 {
-    return mWidgets.count();
+  return mWidgets.count();
 }
 
-QGVWidget* QGVMap::getWigdet(int index) const
+QGVWidget * QGVMap::getWigdet(int index) const
 {
-    return mWidgets.at(index);
+  return mWidgets.at(index);
 }
 
-void QGVMap::select(QGVItem* item)
+void  QGVMap::select(QGVItem *item)
 {
-    item->select();
-    if (item->isSelected()) {
-        mSelections.insert(item);
-    }
+  item->select();
+
+  if (item->isSelected())
+  {
+    mSelections.insert(item);
+  }
 }
 
-void QGVMap::unselect(QGVItem* item)
+void  QGVMap::unselect(QGVItem *item)
 {
+  item->unselect();
+
+  if (!item->isSelected())
+  {
+    mSelections.remove(item);
+  }
+}
+
+void  QGVMap::unselectAll()
+{
+  auto  selections = mSelections;
+
+  for (QGVItem *item : selections)
+  {
     item->unselect();
-    if (!item->isSelected()) {
-        mSelections.remove(item);
-    }
+  }
 }
 
-void QGVMap::unselectAll()
+QSet<QGVItem *>  QGVMap::getSelections() const
 {
-    auto selections = mSelections;
-    for (QGVItem* item : selections) {
-        item->unselect();
-    }
+  return mSelections;
 }
 
-QSet<QGVItem*> QGVMap::getSelections() const
+QList<QGVDrawItem *>  QGVMap::search(const QPointF &projPos, Qt::ItemSelectionMode mode) const
 {
-    return mSelections;
+  QList<QGVDrawItem *>  result;
+
+  for (QGraphicsItem *item : geoView()->scene()->items(projPos, mode))
+  {
+    QGVDrawItem *geoObject = QGVMapQGItem::geoObjectFromQGItem(item);
+
+    if (geoObject)
+    {
+      result << geoObject;
+    }
+  }
+
+  return result;
 }
 
-QList<QGVDrawItem*> QGVMap::search(const QPointF& projPos, Qt::ItemSelectionMode mode) const
+QList<QGVDrawItem *>  QGVMap::search(const QRectF &projRect, Qt::ItemSelectionMode mode) const
 {
-    QList<QGVDrawItem*> result;
-    for (QGraphicsItem* item : geoView()->scene()->items(projPos, mode)) {
-        QGVDrawItem* geoObject = QGVMapQGItem::geoObjectFromQGItem(item);
-        if (geoObject)
-            result << geoObject;
+  QList<QGVDrawItem *>  result;
+
+  for (QGraphicsItem *item : geoView()->scene()->items(projRect, mode))
+  {
+    QGVDrawItem *geoObject = QGVMapQGItem::geoObjectFromQGItem(item);
+
+    if (geoObject)
+    {
+      result << geoObject;
     }
-    return result;
+  }
+
+  return result;
 }
 
-QList<QGVDrawItem*> QGVMap::search(const QRectF& projRect, Qt::ItemSelectionMode mode) const
+QPixmap  QGVMap::grabMapView(bool includeWidgets) const
 {
-    QList<QGVDrawItem*> result;
-    for (QGraphicsItem* item : geoView()->scene()->items(projRect, mode)) {
-        QGVDrawItem* geoObject = QGVMapQGItem::geoObjectFromQGItem(item);
-        if (geoObject)
-            result << geoObject;
-    }
-    return result;
+  const QPixmap  pixmap = (includeWidgets) ? geoView()->grab(geoView()->rect())
+                          : geoView()->viewport()->grab(geoView()->viewport()->rect());
+
+  return pixmap;
 }
 
-QPixmap QGVMap::grabMapView(bool includeWidgets) const
+QPointF  QGVMap::mapToProj(QPoint pos)
 {
-    const QPixmap pixmap = (includeWidgets) ? geoView()->grab(geoView()->rect())
-                                            : geoView()->viewport()->grab(geoView()->viewport()->rect());
-    return pixmap;
+  const auto  viewPos = geoView()->mapFromParent(pos);
+  const auto  projPos = geoView()->mapToScene(viewPos);
+
+  return projPos;
 }
 
-QPointF QGVMap::mapToProj(QPoint pos)
+QPoint  QGVMap::mapFromProj(QPointF projPos)
 {
-    const auto viewPos = geoView()->mapFromParent(pos);
-    const auto projPos = geoView()->mapToScene(viewPos);
-    return projPos;
+  const auto  viewPos = geoView()->mapFromScene(projPos);
+  const auto  mapPos  = geoView()->mapToParent(viewPos);
+
+  return mapPos;
 }
 
-QPoint QGVMap::mapFromProj(QPointF projPos)
+void  QGVMap::refreshMap()
 {
-    const auto viewPos = geoView()->mapFromScene(projPos);
-    const auto mapPos = geoView()->mapToParent(viewPos);
-    return mapPos;
+  mRootItem->update();
 }
 
-void QGVMap::refreshMap()
+void  QGVMap::refreshProjection()
 {
-    mRootItem->update();
+  QRectF        sceneRect          = mProjection->boundaryProjRect();
+  const double  viewXSize          = 640;
+  const double  viewYSize          = 480;
+  const double  projXSize          = sceneRect.width();
+  const double  projYSize          = sceneRect.height();
+  const double  newMinScaleFactor0 = 1.0;
+  const double  newMinScaleFactor1 = qAbs(viewXSize / projXSize);
+  const double  newMinScaleFactor2 = qAbs(viewYSize / projYSize);
+  const double  minScale           = qMin(newMinScaleFactor0, qMin(newMinScaleFactor1, newMinScaleFactor2));
+  const double  maxScale           = 16.0;
+
+  geoView()->setScaleLimits(minScale, maxScale);
+
+  const double  offset = 1;
+  sceneRect.adjust(-sceneRect.width() * offset,
+                   -sceneRect.height() * offset,
+                   +sceneRect.width() * offset,
+                   +sceneRect.height() * offset);
+  geoView()->scene()->setSceneRect(sceneRect);
+
+  auto  root = static_cast<RootItem *>(rootItem());
+  root->onProjection(this);
+
+  for (QGVWidget *widget : mWidgets)
+  {
+    widget->onProjection(this);
+  }
 }
 
-void QGVMap::refreshProjection()
+void  QGVMap::anchoreWidgets()
 {
-    QRectF sceneRect = mProjection->boundaryProjRect();
-
-    const double viewXSize = 640;
-    const double viewYSize = 480;
-
-    const double projXSize = sceneRect.width();
-    const double projYSize = sceneRect.height();
-
-    const double newMinScaleFactor0 = 1.0;
-    const double newMinScaleFactor1 = qAbs(viewXSize / projXSize);
-    const double newMinScaleFactor2 = qAbs(viewYSize / projYSize);
-    const double minScale = qMin(newMinScaleFactor0, qMin(newMinScaleFactor1, newMinScaleFactor2));
-    const double maxScale = 16.0;
-    geoView()->setScaleLimits(minScale, maxScale);
-
-    const double offset = 1;
-    sceneRect.adjust(-sceneRect.width() * offset,
-                     -sceneRect.height() * offset,
-                     +sceneRect.width() * offset,
-                     +sceneRect.height() * offset);
-    geoView()->scene()->setSceneRect(sceneRect);
-
-    auto root = static_cast<RootItem*>(rootItem());
-    root->onProjection(this);
-
-    for (QGVWidget* widget : mWidgets) {
-        widget->onProjection(this);
-    }
+  for (QGVWidget *widget : mWidgets)
+  {
+    widget->anchoreWidget();
+  }
 }
 
-void QGVMap::anchoreWidgets()
+void  QGVMap::onMapState(QGV::MapState state)
 {
-    for (QGVWidget* widget : mWidgets) {
-        widget->anchoreWidget();
-    }
+  Q_EMIT stateChanged(state);
 }
 
-void QGVMap::onMapState(QGV::MapState state)
+void  QGVMap::onMapCamera(const QGVCameraState &oldState, const QGVCameraState &newState)
 {
-    Q_EMIT stateChanged(state);
+  if (!qFuzzyCompare(oldState.azimuth(), newState.azimuth()))
+  {
+    Q_EMIT azimuthChanged();
+  }
+
+  if (!qFuzzyCompare(oldState.scale(), newState.scale()))
+  {
+    Q_EMIT scaleChanged();
+  }
+
+  if (oldState.projRect() != newState.projRect())
+  {
+    Q_EMIT areaChanged();
+  }
+
+  auto  root = static_cast<RootItem *>(rootItem());
+
+  if (root->isVisible())
+  {
+    root->onCamera(oldState, newState);
+  }
+
+  for (QGVWidget *widget : mWidgets)
+  {
+    if (widget->isVisible())
+    {
+      widget->onCamera(oldState, newState);
+    }
+  }
+
+  if (hasMouseTracking())
+  {
+    const auto  pos = mapFromGlobal(QCursor::pos());
+    Q_EMIT mapMouseMove(mapToProj(pos));
+  }
 }
 
-void QGVMap::onMapCamera(const QGVCameraState& oldState, const QGVCameraState& newState)
+void  QGVMap::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!qFuzzyCompare(oldState.azimuth(), newState.azimuth())) {
-        Q_EMIT azimuthChanged();
-    }
-    if (!qFuzzyCompare(oldState.scale(), newState.scale())) {
-        Q_EMIT scaleChanged();
-    }
-    if (oldState.projRect() != newState.projRect()) {
-        Q_EMIT areaChanged();
-    }
+  if (hasMouseTracking())
+  {
+    Q_EMIT mapMouseMove(mapToProj(event->pos()));
+  }
 
-    auto root = static_cast<RootItem*>(rootItem());
-    if (root->isVisible()) {
-        root->onCamera(oldState, newState);
-    }
-    for (QGVWidget* widget : mWidgets) {
-        if (widget->isVisible()) {
-            widget->onCamera(oldState, newState);
-        }
-    }
-
-    if (hasMouseTracking()) {
-        const auto pos = mapFromGlobal(QCursor::pos());
-        Q_EMIT mapMouseMove(mapToProj(pos));
-    }
+  event->ignore();
+  QWidget::mouseMoveEvent(event);
 }
 
-void QGVMap::mouseMoveEvent(QMouseEvent* event)
+void  QGVMap::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (hasMouseTracking()) {
-        Q_EMIT mapMouseMove(mapToProj(event->pos()));
+  if (hasMouseTracking())
+  {
+    if (event->button() == Qt::LeftButton)
+    {
+      Q_EMIT mapMouseMove(mapToProj(event->pos()));
     }
-    event->ignore();
-    QWidget::mouseMoveEvent(event);
+  }
+
+  event->ignore();
+  QWidget::mouseReleaseEvent(event);
 }
