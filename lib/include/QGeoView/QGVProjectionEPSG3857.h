@@ -20,33 +20,33 @@
 
 #include "QGVProjection.h"
 
-class QGV_LIB_DECL  QGVProjectionEPSG3857: public QGVProjection
+class QGV_LIB_DECL QGVProjectionEPSG3857 : public QGVProjection
 {
 public:
-  QGVProjectionEPSG3857();
+    QGVProjectionEPSG3857();
 
-  virtual ~QGVProjectionEPSG3857() = default;
-
-private:
-  QGV::GeoRect  boundaryGeoRect() const override final;
-
-  QRectF        boundaryProjRect() const override final;
-
-  QPointF       geoToProj(QGV::GeoPos const &geoPos) const override final;
-
-  QGV::GeoPos   projToGeo(QPointF const &projPos) const override final;
-
-  QRectF        geoToProj(QGV::GeoRect const &geoRect) const override final;
-
-  QGV::GeoRect  projToGeo(QRectF const &projRect) const override final;
-
-  double        geodesicMeters(QPointF const &projPos1, QPointF const &projPos2) const override final;
-
-  QPointF       forwardPoint(const QGV::GeoPos &geoPos, double distance, double bearig) const;
+    virtual ~QGVProjectionEPSG3857() = default;
 
 private:
-  double        mEarthRadius;
-  double        mOriginShift;
-  QGV::GeoRect  mGeoBoundary;
-  QRectF        mProjBoundary;
+    QGV::GeoRect boundaryGeoRect() const override final;
+
+    QRectF boundaryProjRect() const override final;
+
+    QPointF geoToProj(QGV::GeoPos const& geoPos) const override final;
+
+    QGV::GeoPos projToGeo(QPointF const& projPos) const override final;
+
+    QRectF geoToProj(QGV::GeoRect const& geoRect) const override final;
+
+    QGV::GeoRect projToGeo(QRectF const& projRect) const override final;
+
+    double geodesicMeters(QPointF const& projPos1, QPointF const& projPos2) const override final;
+
+    QPointF forwardPoint(const QGV::GeoPos& geoPos, double distance, double bearig) const;
+
+private:
+    double mEarthRadius;
+    double mOriginShift;
+    QGV::GeoRect mGeoBoundary;
+    QRectF mProjBoundary;
 };

@@ -22,28 +22,28 @@
 
 QGVWidgetText::QGVWidgetText()
 {
-  mLabel.reset(new QLabel());
-  mLabel->setText("");
-  setAttribute(Qt::WA_TransparentForMouseEvents, true);
-  setAnchor(QPoint(10, 10), { Qt::LeftEdge, Qt::BottomEdge });
-  setLayout(new QHBoxLayout(this));
-  layout()->setSpacing(0);
-  layout()->setSizeConstraint(QLayout::SetMinimumSize);
-  layout()->setContentsMargins(0, 0, 0, 0);
-  layout()->addWidget(mLabel.data());
+    mLabel.reset(new QLabel());
+    mLabel->setText("");
+    setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    setAnchor(QPoint(10, 10), { Qt::LeftEdge, Qt::BottomEdge });
+    setLayout(new QHBoxLayout(this));
+    layout()->setSpacing(0);
+    layout()->setSizeConstraint(QLayout::SetMinimumSize);
+    layout()->setContentsMargins(0, 0, 0, 0);
+    layout()->addWidget(mLabel.data());
 }
 
-QLabel * QGVWidgetText::label()
+QLabel* QGVWidgetText::label()
 {
-  return mLabel.data();
+    return mLabel.data();
 }
 
-void  QGVWidgetText::setText(const QString &text)
+void QGVWidgetText::setText(const QString& text)
 {
-  mLabel->setText(text);
+    mLabel->setText(text);
 }
 
-QString  QGVWidgetText::getText() const
+QString QGVWidgetText::getText() const
 {
-  return mLabel->text();
+    return mLabel->text();
 }

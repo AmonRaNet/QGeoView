@@ -20,110 +20,108 @@
 #include "QGVImage.h"
 #include <QFile>
 
-QGvTilesLoader::QGvTilesLoader(QObject *parent)
-  :QThread(parent)
-    {
-      setObjectName("TMSLoader");
-      moveToThread(this);
-      start();
+QGvTilesLoader::QGvTilesLoader(QObject* parent)
+    : QThread(parent)
+{
+    setObjectName("TMSLoader");
+    moveToThread(this);
+    start();
 }
 
 void QGvTilesLoader::request(QString url, QGV::GeoTilePos tilePos)
 {
-    if (QFile::exists(url))
-    {
-      auto  image = QImagePtr::create(url);
-      Q_EMIT        replyFinished(image, tilePos);
+    if (QFile::exists(url)) {
+        auto image = QImagePtr::create(url);
+        Q_EMIT replyFinished(image, tilePos);
     }
 }
 
 void QGvTilesLoader::run()
 {
-  exec();
+    exec();
 }
 
-
-QGVLayerTilesOffline::QGVLayerTilesOffline(QString url):
-  mUrl(url)
+QGVLayerTilesOffline::QGVLayerTilesOffline(QString url)
+    : mUrl(url)
 {
-  setName("OfflineTMSMap");
-  setDescription("TMS Map");
-  qRegisterMetaType<QImagePtr>("QImagePtr");
-  qRegisterMetaType<QGV::GeoTilePos>("QGV::GeoTilePos");
+    setName("OfflineTMSMap");
+    setDescription("TMS Map");
+    qRegisterMetaType<QImagePtr>("QImagePtr");
+    qRegisterMetaType<QGV::GeoTilePos>("QGV::GeoTilePos");
 
-  mQGvTilesLoader = new QGvTilesLoader();
-  connect(mQGvTilesLoader, &QGvTilesLoader::replyFinished, this, &QGVLayerTilesOffline::replyFinished, Qt::QueuedConnection);
-  connect(this, &QGVLayerTilesOffline::requestCome, mQGvTilesLoader, &QGvTilesLoader::request, Qt::QueuedConnection);
-  mQGvTilesLoader->start();
+    mQGvTilesLoader = new QGvTilesLoader();
+    connect(mQGvTilesLoader,
+            &QGvTilesLoader::replyFinished,
+            this,
+            &QGVLayerTilesOffline::replyFinished,
+            Qt::QueuedConnection);
+    connect(this, &QGVLayerTilesOffline::requestCome, mQGvTilesLoader, &QGvTilesLoader::request, Qt::QueuedConnection);
+    mQGvTilesLoader->start();
 }
 
 QGVLayerTilesOffline::~QGVLayerTilesOffline()
 {
-  disconnect(mQGvTilesLoader, &QGvTilesLoader::replyFinished, this, &QGVLayerTilesOffline::replyFinished);
+    disconnect(mQGvTilesLoader, &QGvTilesLoader::replyFinished, this, &QGVLayerTilesOffline::replyFinished);
 
-  mQGvTilesLoader->quit();
-  if (!mQGvTilesLoader->wait())
-  {
-    mQGvTilesLoader->terminate();
-  }
+    mQGvTilesLoader->quit();
+    if (!mQGvTilesLoader->wait()) {
+        mQGvTilesLoader->terminate();
+    }
 }
 
-QString  QGVLayerTilesOffline::tilePosToUrl(const QGV::GeoTilePos &tilePos) const
+QString QGVLayerTilesOffline::tilePosToUrl(const QGV::GeoTilePos& tilePos) const
 {
-  QString  url = mUrl;
+    QString url = mUrl;
 
-  url.replace("${z}", QString::number(tilePos.zoom()));
-  url.replace("${x}", QString::number(tilePos.pos().x()));
-  url.replace("${y}", QString::number(tilePos.pos().y()));
+    url.replace("${z}", QString::number(tilePos.zoom()));
+    url.replace("${x}", QString::number(tilePos.pos().x()));
+    url.replace("${y}", QString::number(tilePos.pos().y()));
 
-  return url;
+    return url;
 }
 
-void  QGVLayerTilesOffline::onProjection(QGVMap *geoMap)
+void QGVLayerTilesOffline::onProjection(QGVMap* geoMap)
 {
-  QGVLayerTiles::onProjection(geoMap);
+    QGVLayerTiles::onProjection(geoMap);
 }
 
-void  QGVLayerTilesOffline::onClean()
+void QGVLayerTilesOffline::onClean()
+{}
+
+void QGVLayerTilesOffline::request(const QGV::GeoTilePos& tilePos)
 {
+    const QString url(tilePosToUrl(tilePos));
+
+    Q_EMIT requestCome(url, tilePos);
 }
 
-void  QGVLayerTilesOffline::request(const QGV::GeoTilePos &tilePos)
-{
-  const QString  url(tilePosToUrl(tilePos));
+void QGVLayerTilesOffline::cancel(const QGV::GeoTilePos& tilePos)
+{}
 
-  Q_EMIT requestCome(url, tilePos);
+int QGVLayerTilesOffline::minZoomlevel() const
+{
+    return 0;
 }
 
-void  QGVLayerTilesOffline::cancel(const QGV::GeoTilePos &tilePos)
+int QGVLayerTilesOffline::maxZoomlevel() const
 {
+    return 20;
 }
 
-int   QGVLayerTilesOffline::minZoomlevel() const
+void QGVLayerTilesOffline::replyFinished(QImagePtr image, QGV::GeoTilePos tilePos)
 {
-  return 0;
-}
-
-int  QGVLayerTilesOffline::maxZoomlevel() const
-{
-  return 20;
-}
-
-void  QGVLayerTilesOffline::replyFinished(QImagePtr image, QGV::GeoTilePos tilePos)
-{
-  if (image)
-  {
-    const QString  url(tilePosToUrl(tilePos));
-    auto           tile = new QGVImage();
-    tile->setGeometry(tilePos.toGeoRect());
-    tile->loadImage(*image);
-    tile->setProperty("drawDebug",
-                      QString("%1\ntile(%2,%3,%4)")
-                      .arg(url)
-                      .arg(tilePos.zoom())
-                      .arg(tilePos.pos().x())
-                      .arg(tilePos.pos().y()));
-    onTile(tilePos, tile);
-    qgvDebug() << "request" << url;
-  }
+    if (image) {
+        const QString url(tilePosToUrl(tilePos));
+        auto tile = new QGVImage();
+        tile->setGeometry(tilePos.toGeoRect());
+        tile->loadImage(*image);
+        tile->setProperty("drawDebug",
+                          QString("%1\ntile(%2,%3,%4)")
+                                  .arg(url)
+                                  .arg(tilePos.zoom())
+                                  .arg(tilePos.pos().x())
+                                  .arg(tilePos.pos().y()));
+        onTile(tilePos, tile);
+        qgvDebug() << "request" << url;
+    }
 }

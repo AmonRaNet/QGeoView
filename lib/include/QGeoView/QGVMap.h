@@ -30,115 +30,115 @@ class QGVWidget;
 class QGVMapQGScene;
 class QGVMapQGView;
 
-class QGV_LIB_DECL  QGVMap: public QWidget
+class QGV_LIB_DECL QGVMap : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit QGVMap(QWidget *parent = 0);
+    explicit QGVMap(QWidget* parent = 0);
 
-  ~QGVMap();
+    ~QGVMap();
 
-  const QGVCameraState  getCamera() const;
+    const QGVCameraState getCamera() const;
 
-  void                  cameraTo(const QGVCameraActions &actions, bool animation = false);
+    void cameraTo(const QGVCameraActions& actions, bool animation = false);
 
-  void                  flyTo(const QGVCameraActions &actions);
+    void flyTo(const QGVCameraActions& actions);
 
-  void                  setProjection(QGV::Projection id);
+    void setProjection(QGV::Projection id);
 
-  void                  setProjection(QGVProjection *projection);
+    void setProjection(QGVProjection* projection);
 
-  QGVProjection       * getProjection() const;
+    QGVProjection* getProjection() const;
 
-  void                  setMouseActions(QGV::MouseActions actions);
+    void setMouseActions(QGV::MouseActions actions);
 
-  void                  setMouseAction(QGV::MouseAction action, bool enabled = true);
+    void setMouseAction(QGV::MouseAction action, bool enabled = true);
 
-  QGV::MouseActions     getMouseActions() const;
+    QGV::MouseActions getMouseActions() const;
 
-  bool                  isMouseAction(QGV::MouseAction action) const;
+    bool isMouseAction(QGV::MouseAction action) const;
 
-  QGVItem             * rootItem() const;
+    QGVItem* rootItem() const;
 
-  QGVMapQGView        * geoView() const;
+    QGVMapQGView* geoView() const;
 
-  void                  addItem(QGVItem *item);
+    void addItem(QGVItem* item);
 
-  void                  removeItem(QGVItem *item);
+    void removeItem(QGVItem* item);
 
-  void                  deleteItems();
+    void deleteItems();
 
-  int                   countItems() const;
+    int countItems() const;
 
-  QGVItem             * getItem(int index) const;
+    QGVItem* getItem(int index) const;
 
-  void                  addWidget(QGVWidget *widget);
+    void addWidget(QGVWidget* widget);
 
-  void                  removeWidget(QGVWidget *widget);
+    void removeWidget(QGVWidget* widget);
 
-  void                  deleteWidgets();
+    void deleteWidgets();
 
-  int                   countWidgets() const;
+    int countWidgets() const;
 
-  QGVWidget           * getWigdet(int index) const;
+    QGVWidget* getWigdet(int index) const;
 
-  void                  select(QGVItem *item);
+    void select(QGVItem* item);
 
-  void                  unselect(QGVItem *item);
+    void unselect(QGVItem* item);
 
-  void                  unselectAll();
+    void unselectAll();
 
-  QSet<QGVItem *>       getSelections() const;
+    QSet<QGVItem*> getSelections() const;
 
-  QList<QGVDrawItem *>  search(const QPointF &projPos, Qt::ItemSelectionMode mode = Qt::ContainsItemShape) const;
+    QList<QGVDrawItem*> search(const QPointF& projPos, Qt::ItemSelectionMode mode = Qt::ContainsItemShape) const;
 
-  QList<QGVDrawItem *>  search(const QRectF &projRect, Qt::ItemSelectionMode mode = Qt::ContainsItemShape) const;
+    QList<QGVDrawItem*> search(const QRectF& projRect, Qt::ItemSelectionMode mode = Qt::ContainsItemShape) const;
 
-  QPixmap               grabMapView(bool includeWidgets = true) const;
+    QPixmap grabMapView(bool includeWidgets = true) const;
 
-  QPointF               mapToProj(QPoint pos);
+    QPointF mapToProj(QPoint pos);
 
-  QPoint                mapFromProj(QPointF projPos);
+    QPoint mapFromProj(QPointF projPos);
 
-  void                  refreshMap();
+    void refreshMap();
 
-  void                  refreshProjection();
+    void refreshProjection();
 
-  void                  anchoreWidgets();
+    void anchoreWidgets();
 
-  virtual void          onMapState(QGV::MapState state);
+    virtual void onMapState(QGV::MapState state);
 
-  virtual void          onMapCamera(const QGVCameraState &oldState, const QGVCameraState &newState);
+    virtual void onMapCamera(const QGVCameraState& oldState, const QGVCameraState& newState);
 
 protected:
-  void                  mouseMoveEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
 
 Q_SIGNALS:
-  void                  projectionChanged();
+    void projectionChanged();
 
-  void                  scaleChanged();
+    void scaleChanged();
 
-  void                  azimuthChanged();
+    void azimuthChanged();
 
-  void                  areaChanged();
+    void areaChanged();
 
-  void                  itemsChanged(QGVItem *parent);
+    void itemsChanged(QGVItem* parent);
 
-  void                  stateChanged(QGV::MapState state);
+    void stateChanged(QGV::MapState state);
 
-  void                  itemClicked(QGVItem *item, QPointF projPos);
+    void itemClicked(QGVItem* item, QPointF projPos);
 
-  void                  itemDoubleClicked(QGVItem *item, QPointF projPos);
+    void itemDoubleClicked(QGVItem* item, QPointF projPos);
 
-  void                  mapMouseMove(QPointF projPos);
+    void mapMouseMove(QPointF projPos);
 
-  void                  mapMouseClick(QPointF projPos);
+    void mapMouseClick(QPointF projPos);
 
 private:
-  QScopedPointer<QGVProjection>  mProjection;
-  QScopedPointer<QGVMapQGView>   mQGView;
-  QScopedPointer<QGVItem>        mRootItem;
-  QList<QGVWidget *>             mWidgets;
-  QSet<QGVItem *>                mSelections;
+    QScopedPointer<QGVProjection> mProjection;
+    QScopedPointer<QGVMapQGView> mQGView;
+    QScopedPointer<QGVItem> mRootItem;
+    QList<QGVWidget*> mWidgets;
+    QSet<QGVItem*> mSelections;
 };

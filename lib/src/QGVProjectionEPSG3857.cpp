@@ -21,101 +21,98 @@
 #include <QLineF>
 #include <QtMath>
 
-QGVProjectionEPSG3857::QGVProjectionEPSG3857():
-  QGVProjection("EPSG3857",
-                "WGS84 Web Mercator",
-                "QGVProjection used in web mapping applications like "
-                "Google/Bing/OpenStreetMap/etc. Sometimes known as "
-                "EPSG:900913.")
+QGVProjectionEPSG3857::QGVProjectionEPSG3857()
+    : QGVProjection("EPSG3857",
+                    "WGS84 Web Mercator",
+                    "QGVProjection used in web mapping applications like "
+                    "Google/Bing/OpenStreetMap/etc. Sometimes known as "
+                    "EPSG:900913.")
 {
-  mEarthRadius  = 6378137.0;  /* meters */
-  mOriginShift  = 2.0 * M_PI * mEarthRadius / 2.0;
-  mGeoBoundary  = QGV::GeoRect(85, -180, -85, +180);
-  mProjBoundary = geoToProj(mGeoBoundary);
+    mEarthRadius = 6378137.0; /* meters */
+    mOriginShift = 2.0 * M_PI * mEarthRadius / 2.0;
+    mGeoBoundary = QGV::GeoRect(85, -180, -85, +180);
+    mProjBoundary = geoToProj(mGeoBoundary);
 }
 
-QGV::GeoRect  QGVProjectionEPSG3857::boundaryGeoRect() const
+QGV::GeoRect QGVProjectionEPSG3857::boundaryGeoRect() const
 {
-  return mGeoBoundary;
+    return mGeoBoundary;
 }
 
-QRectF  QGVProjectionEPSG3857::boundaryProjRect() const
+QRectF QGVProjectionEPSG3857::boundaryProjRect() const
 {
-  return mProjBoundary;
+    return mProjBoundary;
 }
 
-QPointF  QGVProjectionEPSG3857::geoToProj(const QGV::GeoPos &geoPos) const
+QPointF QGVProjectionEPSG3857::geoToProj(const QGV::GeoPos& geoPos) const
 {
-  const double  lon = geoPos.longitude();
-  const double  lat = (geoPos.latitude() > mGeoBoundary.topLeft().latitude()) ? mGeoBoundary.topLeft().latitude()
-                      : geoPos.latitude();
-  const double  x    = lon * mOriginShift / 180.0;
-  const double  preY = -qLn(qTan((90.0 + lat) * M_PI / 360.0)) / (M_PI / 180.0);
-  const double  y    = preY * mOriginShift / 180.0;
+    const double lon = geoPos.longitude();
+    const double lat = (geoPos.latitude() > mGeoBoundary.topLeft().latitude()) ? mGeoBoundary.topLeft().latitude()
+                                                                               : geoPos.latitude();
+    const double x = lon * mOriginShift / 180.0;
+    const double preY = -qLn(qTan((90.0 + lat) * M_PI / 360.0)) / (M_PI / 180.0);
+    const double y = preY * mOriginShift / 180.0;
 
-  return QPointF(x, y);
+    return QPointF(x, y);
 }
 
-QGV::GeoPos  QGVProjectionEPSG3857::projToGeo(const QPointF &projPos) const
+QGV::GeoPos QGVProjectionEPSG3857::projToGeo(const QPointF& projPos) const
 {
-  const double  lon    = (projPos.x() / mOriginShift) * 180.0;
-  const double  preLat = (-projPos.y() / mOriginShift) * 180.0;
-  const double  lat    = 180.0 / M_PI * (2.0 * qAtan(qExp(preLat * M_PI / 180.0)) - M_PI / 2.0);
+    const double lon = (projPos.x() / mOriginShift) * 180.0;
+    const double preLat = (-projPos.y() / mOriginShift) * 180.0;
+    const double lat = 180.0 / M_PI * (2.0 * qAtan(qExp(preLat * M_PI / 180.0)) - M_PI / 2.0);
 
-  return QGV::GeoPos(lat, lon);
+    return QGV::GeoPos(lat, lon);
 }
 
-QRectF  QGVProjectionEPSG3857::geoToProj(const QGV::GeoRect &geoRect) const
+QRectF QGVProjectionEPSG3857::geoToProj(const QGV::GeoRect& geoRect) const
 {
-  QRectF  rect;
+    QRectF rect;
 
-  rect.setTopLeft(geoToProj(geoRect.topLeft()));
-  rect.setBottomRight(geoToProj(geoRect.bottomRight()));
+    rect.setTopLeft(geoToProj(geoRect.topLeft()));
+    rect.setBottomRight(geoToProj(geoRect.bottomRight()));
 
-  return rect;
+    return rect;
 }
 
-QGV::GeoRect  QGVProjectionEPSG3857::projToGeo(const QRectF &projRect) const
+QGV::GeoRect QGVProjectionEPSG3857::projToGeo(const QRectF& projRect) const
 {
-  return QGV::GeoRect(projToGeo(projRect.topLeft()), projToGeo(projRect.bottomRight()));
+    return QGV::GeoRect(projToGeo(projRect.topLeft()), projToGeo(projRect.bottomRight()));
 }
 
-double  QGVProjectionEPSG3857::geodesicMeters(const QPointF &projPos1, const QPointF &projPos2) const
+double QGVProjectionEPSG3857::geodesicMeters(const QPointF& projPos1, const QPointF& projPos2) const
 {
-  const QGV::GeoPos  geoPos1      = projToGeo(projPos1);
-  const QGV::GeoPos  geoPos2      = projToGeo(projPos2);
-  const double       latitudeArc  = (geoPos1.latitude() - geoPos2.latitude()) * M_PI / 180.0;
-  const double       longitudeArc = (geoPos1.longitude() - geoPos2.longitude()) * M_PI / 180.0;
-  const double       latitudeH    = qPow(sin(latitudeArc * 0.5), 2);
-  const double       lontitudeH   = qPow(sin(longitudeArc * 0.5), 2);
-  const double       lonFactor    = cos(geoPos1.latitude() * M_PI / 180.0) * cos(geoPos2.latitude() * M_PI / 180.0);
-  const double       arcInRadians = 2.0 * asin(sqrt(latitudeH + lonFactor * lontitudeH));
+    const QGV::GeoPos geoPos1 = projToGeo(projPos1);
+    const QGV::GeoPos geoPos2 = projToGeo(projPos2);
+    const double latitudeArc = (geoPos1.latitude() - geoPos2.latitude()) * M_PI / 180.0;
+    const double longitudeArc = (geoPos1.longitude() - geoPos2.longitude()) * M_PI / 180.0;
+    const double latitudeH = qPow(sin(latitudeArc * 0.5), 2);
+    const double lontitudeH = qPow(sin(longitudeArc * 0.5), 2);
+    const double lonFactor = cos(geoPos1.latitude() * M_PI / 180.0) * cos(geoPos2.latitude() * M_PI / 180.0);
+    const double arcInRadians = 2.0 * asin(sqrt(latitudeH + lonFactor * lontitudeH));
 
-  return mEarthRadius * arcInRadians;
+    return mEarthRadius * arcInRadians;
 }
 
-QPointF  QGVProjectionEPSG3857::forwardPoint(const QGV::GeoPos &geoPos, double distance, double bearig) const
+QPointF QGVProjectionEPSG3857::forwardPoint(const QGV::GeoPos& geoPos, double distance, double bearig) const
 {
-  //! Formula: 	φ2 = asin( sin φ1 ⋅ cos δ + cos φ1 ⋅ sin δ ⋅ cos θ )
-  //! λ2 = λ1 + atan2( sin θ ⋅ sin δ ⋅ cos φ1, cos δ − sin φ1 ⋅ sin φ2 )
-  //! Paramaetrs :
-  //! φ is latitude
-  //! λ is longitude
-  //! θ is the bearing (clockwise from north)
-  //! δ is the angular distance d/R
-  //! d being the distance travelled
-  //! R the earth’s radius
+    //! Formula: 	φ2 = asin( sin φ1 ⋅ cos δ + cos φ1 ⋅ sin δ ⋅ cos θ )
+    //! λ2 = λ1 + atan2( sin θ ⋅ sin δ ⋅ cos φ1, cos δ − sin φ1 ⋅ sin φ2 )
+    //! Paramaetrs :
+    //! φ is latitude
+    //! λ is longitude
+    //! θ is the bearing (clockwise from north)
+    //! δ is the angular distance d/R
+    //! d being the distance travelled
+    //! R the earth’s radius
 
-  bearig = qDegreesToRadians(bearig);
+    bearig = qDegreesToRadians(bearig);
 
-  double  lat = asin(sin(geoPos.latitude())
-                     * cos(distance / mEarthRadius) + cos(geoPos.latitude())
-                     * sin(distance / mEarthRadius)
-                     * cos(bearig));
-  double  lon = geoPos.longitude()
-                + atan2(sin(bearig) * sin(distance / mEarthRadius) * cos(geoPos.latitude()),
-                        cos(distance / mEarthRadius) - sin(geoPos.latitude())
-                        * sin(geoPos.latitude()));
+    double lat = asin(sin(geoPos.latitude()) * cos(distance / mEarthRadius) +
+                      cos(geoPos.latitude()) * sin(distance / mEarthRadius) * cos(bearig));
+    double lon =
+            geoPos.longitude() + atan2(sin(bearig) * sin(distance / mEarthRadius) * cos(geoPos.latitude()),
+                                       cos(distance / mEarthRadius) - sin(geoPos.latitude()) * sin(geoPos.latitude()));
 
-  return geoToProj(QGV::GeoPos(lat, lon));
+    return geoToProj(QGV::GeoPos(lat, lon));
 }

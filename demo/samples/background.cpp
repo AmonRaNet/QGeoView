@@ -24,89 +24,82 @@
 #include <QGeoView/QGVLayerOSM.h>
 #include <QGeoView/QGVLayerTilesOffline.h>
 
-BackgroundDemo::BackgroundDemo(QGVMap *geoMap, QObject *parent):
-  DemoItem(geoMap, SelectorDialog::Single, parent)
+BackgroundDemo::BackgroundDemo(QGVMap* geoMap, QObject* parent)
+    : DemoItem(geoMap, SelectorDialog::Single, parent)
+{}
+
+QString BackgroundDemo::label() const
 {
+    return "Background maps";
 }
 
-QString  BackgroundDemo::label() const
+QString BackgroundDemo::comment() const
 {
-  return "Background maps";
+    return "QGV supports multiple tile map types. This includes:<br>"
+           "- OpenStreetMaps<br>"
+           "- Google Maps<br>"
+           "- Bing Maps<br>"
+           "- Custom maps(OSM-like, for e.g MapServer)";
 }
 
-QString  BackgroundDemo::comment() const
+void BackgroundDemo::onInit()
 {
-  return "QGV supports multiple tile map types. This includes:<br>"
-         "- OpenStreetMaps<br>"
-         "- Google Maps<br>"
-         "- Bing Maps<br>"
-         "- Custom maps(OSM-like, for e.g MapServer)";
+    /*
+     * Footer will be used to show fixed text about selected background layer.
+     * Widget owned by map.
+     */
+    mFooter = new QGVWidgetText();
+    geoMap()->addWidget(mFooter);
+
+    /*
+     * List of available tile maps.
+     */
+    const QString customURI = "http://c.tile.stamen.com/watercolor/${z}/${x}/${y}.jpg";
+    const QList<QPair<QString, QGVLayer*>> layers = { { "OSM", new QGVLayerOSM() },
+                                                      { "GOOGLE_SATELLITE",
+                                                        new QGVLayerGoogle(QGV::TilesType::Satellite) },
+                                                      { "GOOGLE_HYBRID", new QGVLayerGoogle(QGV::TilesType::Hybrid) },
+                                                      { "GOOGLE_SCHEMA", new QGVLayerGoogle(QGV::TilesType::Schema) },
+                                                      { "BING_SATELLITE", new QGVLayerBing(QGV::TilesType::Satellite) },
+                                                      { "BING_HYBRID", new QGVLayerBing(QGV::TilesType::Hybrid) },
+                                                      { "BING_SCHEMA", new QGVLayerBing(QGV::TilesType::Schema) },
+                                                      { "CUSTOM_OSM", new QGVLayerOSM(customURI) } };
+
+    /*
+     * Layers will be owned by map.
+     */
+    for (auto pair : layers) {
+        auto name = pair.first;
+        auto layer = pair.second;
+        layer->hide();
+        geoMap()->addItem(layer);
+        selector()->addItem(name, std::bind(&BackgroundDemo::setSelected, this, layer, std::placeholders::_1));
+    }
+
+    selector()->select(0);
 }
 
-void  BackgroundDemo::onInit()
+void BackgroundDemo::onStart()
 {
-  /*
-   * Footer will be used to show fixed text about selected background layer.
-   * Widget owned by map.
-   */
-  mFooter = new QGVWidgetText();
-  geoMap()->addWidget(mFooter);
-
-  /*
-   * List of available tile maps.
-   */
-  const QString                            customURI  = "http://c.tile.stamen.com/watercolor/${z}/${x}/${y}.jpg";
-  const QList<QPair<QString, QGVLayer *>>  layers     = {
-    { "OSM",              new QGVLayerOSM()                             },
-    { "GOOGLE_SATELLITE", new QGVLayerGoogle(QGV::TilesType::Satellite) },
-    { "GOOGLE_HYBRID",    new QGVLayerGoogle(QGV::TilesType::Hybrid)    },
-    { "GOOGLE_SCHEMA",    new QGVLayerGoogle(QGV::TilesType::Schema)    },
-    { "BING_SATELLITE",   new QGVLayerBing(QGV::TilesType::Satellite)   },
-    { "BING_HYBRID",      new QGVLayerBing(QGV::TilesType::Hybrid)      },
-    { "BING_SCHEMA",      new QGVLayerBing(QGV::TilesType::Schema)      },
-    { "CUSTOM_OSM",       new QGVLayerOSM(customURI)                    }
-  };
-
-  /*
-   * Layers will be owned by map.
-   */
-  for (auto pair : layers)
-  {
-    auto  name  = pair.first;
-    auto  layer = pair.second;
-    layer->hide();
-    geoMap()->addItem(layer);
-    selector()->addItem(name, std::bind(&BackgroundDemo::setSelected, this, layer, std::placeholders::_1));
-  }
-
-  selector()->select(0);
+    selector()->show();
 }
 
-void  BackgroundDemo::onStart()
+void BackgroundDemo::onEnd()
 {
-  selector()->show();
+    selector()->hide();
 }
 
-void  BackgroundDemo::onEnd()
+void BackgroundDemo::setSelected(QGVLayer* layer, bool selected)
 {
-  selector()->hide();
-}
+    if (layer == nullptr) {
+        return;
+    }
 
-void  BackgroundDemo::setSelected(QGVLayer *layer, bool selected)
-{
-  if (layer == nullptr)
-  {
-    return;
-  }
+    layer->setVisible(selected);
 
-  layer->setVisible(selected);
-
-  if (selected)
-  {
-    mFooter->setText(layer->getName() + ", " + layer->getDescription());
-  }
-  else
-  {
-    mFooter->setText("");
-  }
+    if (selected) {
+        mFooter->setText(layer->getName() + ", " + layer->getDescription());
+    } else {
+        mFooter->setText("");
+    }
 }
