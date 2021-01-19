@@ -55,8 +55,8 @@ void  BackgroundDemo::onInit()
   /*
    * List of available tile maps.
    */
-  const QString                            customURI = "http://c.tile.stamen.com/watercolor/${z}/${x}/${y}.jpg";
-  const QList<QPair<QString, QGVLayer *>>  layers    = {
+  const QString                            customURI  = "http://c.tile.stamen.com/watercolor/${z}/${x}/${y}.jpg";
+  const QList<QPair<QString, QGVLayer *>>  layers     = {
     { "OSM",              new QGVLayerOSM()                             },
     { "GOOGLE_SATELLITE", new QGVLayerGoogle(QGV::TilesType::Satellite) },
     { "GOOGLE_HYBRID",    new QGVLayerGoogle(QGV::TilesType::Hybrid)    },
@@ -64,7 +64,7 @@ void  BackgroundDemo::onInit()
     { "BING_SATELLITE",   new QGVLayerBing(QGV::TilesType::Satellite)   },
     { "BING_HYBRID",      new QGVLayerBing(QGV::TilesType::Hybrid)      },
     { "BING_SCHEMA",      new QGVLayerBing(QGV::TilesType::Schema)      },
-    { "CUSTOM_OSM",       new QGVLayerOSM(customURI)                    },
+    { "CUSTOM_OSM",       new QGVLayerOSM(customURI)                    }
   };
 
   /*

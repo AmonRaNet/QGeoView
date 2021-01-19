@@ -408,17 +408,3 @@ void  QGVMap::mouseMoveEvent(QMouseEvent *event)
   event->ignore();
   QWidget::mouseMoveEvent(event);
 }
-
-void  QGVMap::mouseReleaseEvent(QMouseEvent *event)
-{
-  if (hasMouseTracking())
-  {
-    if (event->button() == Qt::LeftButton)
-    {
-      Q_EMIT mapMouseMove(mapToProj(event->pos()));
-    }
-  }
-
-  event->ignore();
-  QWidget::mouseReleaseEvent(event);
-}

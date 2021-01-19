@@ -114,8 +114,6 @@ public:
 protected:
   void                  mouseMoveEvent(QMouseEvent *event) override;
 
-  void                  mouseReleaseEvent(QMouseEvent *event) override;
-
 Q_SIGNALS:
   void                  projectionChanged();
 
