@@ -55,9 +55,8 @@ void  BackgroundDemo::onInit()
   /*
    * List of available tile maps.
    */
-  const QString                            customURI  = "http://c.tile.stamen.com/watercolor/${z}/${x}/${y}.jpg";
-  const QString                            offlineURI = "/home/mola/.GMapCatcher/OSM_tiles/${z}/${x}/${y}.png";
-  const QList<QPair<QString, QGVLayer *>>  layers     = {
+  const QString                            customURI = "http://c.tile.stamen.com/watercolor/${z}/${x}/${y}.jpg";
+  const QList<QPair<QString, QGVLayer *>>  layers    = {
     { "OSM",              new QGVLayerOSM()                             },
     { "GOOGLE_SATELLITE", new QGVLayerGoogle(QGV::TilesType::Satellite) },
     { "GOOGLE_HYBRID",    new QGVLayerGoogle(QGV::TilesType::Hybrid)    },
