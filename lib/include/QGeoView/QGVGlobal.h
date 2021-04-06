@@ -19,7 +19,7 @@
 #pragma once
 
 #include <QDebug>
-#include <QNetworkAccessManager>
+#include <QtNetwork/QNetworkAccessManager>
 #include <QPainterPath>
 #include <QPointF>
 #include <QRectF>
