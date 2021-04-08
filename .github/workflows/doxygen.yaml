@@ -2,7 +2,7 @@ name: Doxygen deploy
 
 on:
   workflow_dispatch:
-    # Inputs the workflow accepts.
+    # Inputs the workflow accepts.v 
     inputs:
       name:
         # Friendly description to be shown in the UI instead of 'name'
