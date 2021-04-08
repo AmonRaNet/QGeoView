@@ -1,7 +1,12 @@
-# QGeoView(QGV)
+# QGeoView (QGV)
 
-QGeoView is a Qt / C ++ widget for visualizing geographic data, like tiled layers, raster or vector data. QGeoView has only Qt as dependency. This component uses QGraphicsView and focuses on usability and performance.
-QGeoView public interface follows best practices from OpenLayers and Google Maps API and supports all basic map features, like:
+![Logo](market-place/logo_64_64.png) QGeoView is a Qt / C ++ widget for visualizing geographic data.
+
+## Headings
+
+QGeoView allows to show different kind of geographic data, like tiled layers, raster or vector data.
+Component is based on QGraphicsView and focused on usability and performance.
+QGeoView public interface try to follow best practices from OpenLayers and Google Maps API and supports all basic map features, like:
 
  * EPSG3857 projection (others can be added)
  * Camera changes: scaling, rotation, moving
@@ -69,6 +74,4 @@ QGeoView uses [SemVer](http://semver.org/) for versioning. For the versions avai
 
 ## License
 
-This project is licensed under the [LGPL License v3](http://www.gnu.org/licenses/).
-
-Please contact the author if you need development with closed source.
+This project is licensed under the [LGPL License v3](https://www.gnu.org/licenses/lgpl-3.0.html).
