@@ -1,0 +1,47 @@
+name: Doxygen deploy
+
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Person to greet'
+        # Default value if no value is explicitly provided
+        default: 'World'
+        # Input has to be provided for the workflow to run
+        required: true
+
+jobs:
+  doxygen:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Prepare
+      run: mkdir -p ./build/documents
+
+    - name: Doxygen Action
+      uses: mattnotmitt/doxygen-action@v1.2.3
+      with:
+        doxyfile-path: "./Doxyfile" # default is ./Doxyfile
+        working-directory: "." # default is .
+
+    - name: Prepare1
+      run: ls ./build/documents
+
+    - name: Prepare1
+      run: ls .
+
+    - name: Prepare1
+      run: echo $PWD
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/documents/html
+        enable_jekyll: false
+        allow_empty_commit: false
+        force_orphan: tru
