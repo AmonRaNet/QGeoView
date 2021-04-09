@@ -1,0 +1,30 @@
+name: Doxygen deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  doxygen:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Prepare folders
+      run: mkdir -p ./build/documents
+
+    - name: Doxygen Action
+      uses: mattnotmitt/doxygen-action@v1.2.3
+      with:
+        doxyfile-path: "./Doxyfile"
+        working-directory: "."
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/documents/html
+        enable_jekyll: false
+        allow_empty_commit: false
+        force_orphan: true
