@@ -11,13 +11,13 @@ repos:
         stages: [commit]
 
   - repo: https://github.com/pocc/pre-commit-hooks
-    rev: python
+    rev: v1.1.1
     hooks:
       - id: clang-format
         args: [-i]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
+    rev: v3.4.0
     hooks:
     - id: trailing-whitespace
       args: [--markdown-linebreak-ext=md]

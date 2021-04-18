@@ -1,6 +1,13 @@
 # Release Notes
 
-## v1.0.2 - 26.04.2020
+## v1.0.3
+
+- Fixed bug for Windows build
+- Updated pre-commit requirements (python3)
+- Added pre-commit github-workflow
+- Added doxygen github-workflow
+
+## v1.0.2
 
 Maintenance work:
  - Added git pre-commit hooks
@@ -8,10 +15,10 @@ Maintenance work:
  - Fixed clang-format errors
  - Updated legacy header
 
-## v1.0.1 - 30.12.2019
+## v1.0.1
 
 Relicense to LGPL 3.0 instead of GPL 3.0
 
-## v1.0.0 - 17.09.2018
+## v1.0.0
 
 Initial version

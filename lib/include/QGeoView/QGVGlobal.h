@@ -162,24 +162,24 @@ private:
     QPoint mPos;
 };
 
-void setNetworkManager(QNetworkAccessManager* manager);
-QNetworkAccessManager* getNetworkManager();
+QGV_LIB_DECL void setNetworkManager(QNetworkAccessManager* manager);
+QGV_LIB_DECL QNetworkAccessManager* getNetworkManager();
 
-QTransform createTransfrom(QPointF const& projAnchor, double scale, double azimuth);
-QTransform createTransfromScale(QPointF const& projAnchor, double scale);
-QTransform createTransfromAzimuth(QPointF const& projAnchor, double azimuth);
-QPainterPath createTextPath(const QRect& rect, const QString& text, const QFont& font, int penWidth);
+QGV_LIB_DECL QTransform createTransfrom(QPointF const& projAnchor, double scale, double azimuth);
+QGV_LIB_DECL QTransform createTransfromScale(QPointF const& projAnchor, double scale);
+QGV_LIB_DECL QTransform createTransfromAzimuth(QPointF const& projAnchor, double azimuth);
+QGV_LIB_DECL QPainterPath createTextPath(const QRect& rect, const QString& text, const QFont& font, int penWidth);
 
-void setDrawDebug(bool enabled);
-bool isDrawDebug();
-void setPrintDebug(bool enabled);
-bool isPrintDebug();
+QGV_LIB_DECL void setDrawDebug(bool enabled);
+QGV_LIB_DECL bool isDrawDebug();
+QGV_LIB_DECL void setPrintDebug(bool enabled);
+QGV_LIB_DECL bool isPrintDebug();
 
 } // namespace QGV
 
-QDebug operator<<(QDebug debug, const QGV::GeoPos& value);
-QDebug operator<<(QDebug debug, const QGV::GeoRect& value);
-QDebug operator<<(QDebug debug, const QGV::GeoTilePos& value);
+QGV_LIB_DECL QDebug operator<<(QDebug debug, const QGV::GeoPos& value);
+QGV_LIB_DECL QDebug operator<<(QDebug debug, const QGV::GeoRect& value);
+QGV_LIB_DECL QDebug operator<<(QDebug debug, const QGV::GeoTilePos& value);
 
 Q_DECLARE_METATYPE(QGV::GeoPos)
 Q_DECLARE_METATYPE(QGV::GeoRect)
