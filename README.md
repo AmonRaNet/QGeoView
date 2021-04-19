@@ -37,7 +37,7 @@ If you use qmake
 cd <build-dir>
 qmake <source-dir>/QGeoView.pro
 make
-make install
+make install QGV_DESTDIR=/path/to/install
 ```
 
 If you use cmake
@@ -45,7 +45,7 @@ If you use cmake
 ```
 cd <build-dir>
 cmake <source-dir>
-cmake --build . --config Release --target install
+cmake --build . --config Release --target install -- DESTDIR=/path/to/install
 ```
 
 If you use doxygen (documentation)
