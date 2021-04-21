@@ -32,6 +32,7 @@ public:
     explicit RootItem(QGVMap* geoMap)
         : mGeoMap(geoMap)
     {}
+
     virtual ~RootItem();
 
     QGVMap* getMap() const override final
@@ -42,6 +43,7 @@ public:
 private:
     QGVMap* mGeoMap;
 };
+
 RootItem::~RootItem() = default;
 
 QGVMap::QGVMap(QWidget* parent)
@@ -81,6 +83,7 @@ void QGVMap::flyTo(const QGVCameraActions& actions)
 void QGVMap::setProjection(QGV::Projection id)
 {
     mProjection.reset(nullptr);
+
     switch (id) {
         case QGV::Projection::EPSG3857:
             setProjection(new QGVProjectionEPSG3857());
@@ -109,10 +112,13 @@ void QGVMap::setMouseActions(QGV::MouseActions actions)
 void QGVMap::setMouseAction(QGV::MouseAction action, bool enabled)
 {
     QGV::MouseActions newActions = getMouseActions();
-    if (enabled)
+
+    if (enabled) {
         newActions |= action;
-    else
+    } else {
         newActions &= ~static_cast<int>(action);
+    }
+
     setMouseActions(newActions);
 }
 
@@ -166,7 +172,8 @@ QGVItem* QGVMap::getItem(int index) const
 void QGVMap::addWidget(QGVWidget* widget)
 {
     Q_ASSERT(widget);
-    if (widget->getMap() != nullptr && widget->getMap() != this) {
+
+    if ((widget->getMap() != nullptr) && (widget->getMap() != this)) {
         widget->getMap()->removeWidget(widget);
     }
 
@@ -177,8 +184,9 @@ void QGVMap::addWidget(QGVWidget* widget)
 
 void QGVMap::removeWidget(QGVWidget* widget)
 {
-    if (!mWidgets.contains(widget))
+    if (!mWidgets.contains(widget)) {
         return;
+    }
 
     mWidgets.removeAll(widget);
     widget->setMap(nullptr);
@@ -187,6 +195,7 @@ void QGVMap::removeWidget(QGVWidget* widget)
 void QGVMap::deleteWidgets()
 {
     auto copy = mWidgets;
+
     qDeleteAll(copy.begin(), copy.end());
     mWidgets.clear();
 }
@@ -204,6 +213,7 @@ QGVWidget* QGVMap::getWigdet(int index) const
 void QGVMap::select(QGVItem* item)
 {
     item->select();
+
     if (item->isSelected()) {
         mSelections.insert(item);
     }
@@ -212,6 +222,7 @@ void QGVMap::select(QGVItem* item)
 void QGVMap::unselect(QGVItem* item)
 {
     item->unselect();
+
     if (!item->isSelected()) {
         mSelections.remove(item);
     }
@@ -220,6 +231,7 @@ void QGVMap::unselect(QGVItem* item)
 void QGVMap::unselectAll()
 {
     auto selections = mSelections;
+
     for (QGVItem* item : selections) {
         item->unselect();
     }
@@ -233,22 +245,30 @@ QSet<QGVItem*> QGVMap::getSelections() const
 QList<QGVDrawItem*> QGVMap::search(const QPointF& projPos, Qt::ItemSelectionMode mode) const
 {
     QList<QGVDrawItem*> result;
+
     for (QGraphicsItem* item : geoView()->scene()->items(projPos, mode)) {
         QGVDrawItem* geoObject = QGVMapQGItem::geoObjectFromQGItem(item);
-        if (geoObject)
+
+        if (geoObject) {
             result << geoObject;
+        }
     }
+
     return result;
 }
 
 QList<QGVDrawItem*> QGVMap::search(const QRectF& projRect, Qt::ItemSelectionMode mode) const
 {
     QList<QGVDrawItem*> result;
+
     for (QGraphicsItem* item : geoView()->scene()->items(projRect, mode)) {
         QGVDrawItem* geoObject = QGVMapQGItem::geoObjectFromQGItem(item);
-        if (geoObject)
+
+        if (geoObject) {
             result << geoObject;
+        }
     }
+
     return result;
 }
 
@@ -256,6 +276,7 @@ QPixmap QGVMap::grabMapView(bool includeWidgets) const
 {
     const QPixmap pixmap = (includeWidgets) ? geoView()->grab(geoView()->rect())
                                             : geoView()->viewport()->grab(geoView()->viewport()->rect());
+
     return pixmap;
 }
 
@@ -263,6 +284,7 @@ QPointF QGVMap::mapToProj(QPoint pos)
 {
     const auto viewPos = geoView()->mapFromParent(pos);
     const auto projPos = geoView()->mapToScene(viewPos);
+
     return projPos;
 }
 
@@ -270,6 +292,7 @@ QPoint QGVMap::mapFromProj(QPointF projPos)
 {
     const auto viewPos = geoView()->mapFromScene(projPos);
     const auto mapPos = geoView()->mapToParent(viewPos);
+
     return mapPos;
 }
 
@@ -281,18 +304,16 @@ void QGVMap::refreshMap()
 void QGVMap::refreshProjection()
 {
     QRectF sceneRect = mProjection->boundaryProjRect();
-
     const double viewXSize = 640;
     const double viewYSize = 480;
-
     const double projXSize = sceneRect.width();
     const double projYSize = sceneRect.height();
-
     const double newMinScaleFactor0 = 1.0;
     const double newMinScaleFactor1 = qAbs(viewXSize / projXSize);
     const double newMinScaleFactor2 = qAbs(viewYSize / projYSize);
     const double minScale = qMin(newMinScaleFactor0, qMin(newMinScaleFactor1, newMinScaleFactor2));
     const double maxScale = 16.0;
+
     geoView()->setScaleLimits(minScale, maxScale);
 
     const double offset = 1;
@@ -327,17 +348,21 @@ void QGVMap::onMapCamera(const QGVCameraState& oldState, const QGVCameraState& n
     if (!qFuzzyCompare(oldState.azimuth(), newState.azimuth())) {
         Q_EMIT azimuthChanged();
     }
+
     if (!qFuzzyCompare(oldState.scale(), newState.scale())) {
         Q_EMIT scaleChanged();
     }
+
     if (oldState.projRect() != newState.projRect()) {
         Q_EMIT areaChanged();
     }
 
     auto root = static_cast<RootItem*>(rootItem());
+
     if (root->isVisible()) {
         root->onCamera(oldState, newState);
     }
+
     for (QGVWidget* widget : mWidgets) {
         if (widget->isVisible()) {
             widget->onCamera(oldState, newState);
@@ -355,6 +380,7 @@ void QGVMap::mouseMoveEvent(QMouseEvent* event)
     if (hasMouseTracking()) {
         Q_EMIT mapMouseMove(mapToProj(event->pos()));
     }
+
     event->ignore();
     QWidget::mouseMoveEvent(event);
 }

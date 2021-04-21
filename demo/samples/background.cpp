@@ -22,6 +22,7 @@
 #include <QGeoView/QGVLayerBing.h>
 #include <QGeoView/QGVLayerGoogle.h>
 #include <QGeoView/QGVLayerOSM.h>
+#include <QGeoView/QGVLayerTilesOffline.h>
 
 BackgroundDemo::BackgroundDemo(QGVMap* geoMap, QObject* parent)
     : DemoItem(geoMap, SelectorDialog::Single, parent)
@@ -49,20 +50,21 @@ void BackgroundDemo::onInit()
      */
     mFooter = new QGVWidgetText();
     geoMap()->addWidget(mFooter);
+
     /*
      * List of available tile maps.
      */
     const QString customURI = "http://c.tile.stamen.com/watercolor/${z}/${x}/${y}.jpg";
-    const QList<QPair<QString, QGVLayer*>> layers = {
-        { "OSM", new QGVLayerOSM() },
-        { "GOOGLE_SATELLITE", new QGVLayerGoogle(QGV::TilesType::Satellite) },
-        { "GOOGLE_HYBRID", new QGVLayerGoogle(QGV::TilesType::Hybrid) },
-        { "GOOGLE_SCHEMA", new QGVLayerGoogle(QGV::TilesType::Schema) },
-        { "BING_SATELLITE", new QGVLayerBing(QGV::TilesType::Satellite) },
-        { "BING_HYBRID", new QGVLayerBing(QGV::TilesType::Hybrid) },
-        { "BING_SCHEMA", new QGVLayerBing(QGV::TilesType::Schema) },
-        { "CUSTOM_OSM", new QGVLayerOSM(customURI) },
-    };
+    const QList<QPair<QString, QGVLayer*>> layers = { { "OSM", new QGVLayerOSM() },
+                                                      { "GOOGLE_SATELLITE",
+                                                        new QGVLayerGoogle(QGV::TilesType::Satellite) },
+                                                      { "GOOGLE_HYBRID", new QGVLayerGoogle(QGV::TilesType::Hybrid) },
+                                                      { "GOOGLE_SCHEMA", new QGVLayerGoogle(QGV::TilesType::Schema) },
+                                                      { "BING_SATELLITE", new QGVLayerBing(QGV::TilesType::Satellite) },
+                                                      { "BING_HYBRID", new QGVLayerBing(QGV::TilesType::Hybrid) },
+                                                      { "BING_SCHEMA", new QGVLayerBing(QGV::TilesType::Schema) },
+                                                      { "CUSTOM_OSM", new QGVLayerOSM(customURI) } };
+
     /*
      * Layers will be owned by map.
      */
@@ -73,6 +75,7 @@ void BackgroundDemo::onInit()
         geoMap()->addItem(layer);
         selector()->addItem(name, std::bind(&BackgroundDemo::setSelected, this, layer, std::placeholders::_1));
     }
+
     selector()->select(0);
 }
 
@@ -91,7 +94,9 @@ void BackgroundDemo::setSelected(QGVLayer* layer, bool selected)
     if (layer == nullptr) {
         return;
     }
+
     layer->setVisible(selected);
+
     if (selected) {
         mFooter->setText(layer->getName() + ", " + layer->getDescription());
     } else {

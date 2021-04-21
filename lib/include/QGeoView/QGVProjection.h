@@ -24,20 +24,30 @@ class QGV_LIB_DECL QGVProjection
 {
 public:
     explicit QGVProjection(const QString& id, const QString& name, const QString& description);
+
     virtual ~QGVProjection() = default;
 
     QString getID() const;
+
     QString getName() const;
+
     QString getDescription() const;
 
     virtual QGV::GeoRect boundaryGeoRect() const = 0;
+
     virtual QRectF boundaryProjRect() const = 0;
 
     virtual QPointF geoToProj(QGV::GeoPos const& geoPos) const = 0;
+
     virtual QGV::GeoPos projToGeo(QPointF const& projPos) const = 0;
+
     virtual QRectF geoToProj(QGV::GeoRect const& geoRect) const = 0;
+
     virtual QGV::GeoRect projToGeo(QRectF const& projRect) const = 0;
+
     virtual double geodesicMeters(QPointF const& projPos1, QPointF const& projPos2) const = 0;
+
+    virtual QPointF forwardPoint(QGV::GeoPos const& geoPos, double distance, double bearig) const = 0;
 
 private:
     Q_DISABLE_COPY(QGVProjection)
