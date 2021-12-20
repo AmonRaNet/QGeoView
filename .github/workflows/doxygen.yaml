@@ -15,13 +15,13 @@ jobs:
       run: mkdir -p ./build/documents
 
     - name: Doxygen Action
-      uses: mattnotmitt/doxygen-action@v1.2.3
+      uses: mattnotmitt/doxygen-action@v1.3.3
       with:
         doxyfile-path: "./Doxyfile"
         working-directory: "."
 
     - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v3.8.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build/documents/html
