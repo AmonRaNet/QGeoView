@@ -328,8 +328,8 @@ void QGVMapQGView::stopSelectionRect(QMouseEvent* event)
 void QGVMapQGView::stopMovingObject(QMouseEvent* event)
 {
     Q_ASSERT(mMovingObject);
-    const QPointF projMouse = mapToScene(event->pos());
-    mMovingObject->projOnObjectStopMove(projMouse);
+    const QPointF projPos = mapToScene(event->pos());
+    mMovingObject->projOnObjectStopMove(projPos);
     changeState(QGV::MapState::Idle);
 }
 
@@ -361,8 +361,7 @@ void QGVMapQGView::selectObjectsByRect(QMouseEvent* event, QRect selRect)
     if (event->modifiers() == Qt::ShiftModifier) {
         mGeoMap->unselectAll();
     }
-    const QRectF projSelRect = QRectF(mGeoMap->geoView()->mapToScene(selRect.topLeft()),
-                                      mGeoMap->geoView()->mapToScene(selRect.bottomRight()));
+    const QRectF projSelRect = QRectF(mapToScene(selRect.topLeft()), mapToScene(selRect.bottomRight()));
     auto selList = mGeoMap->search(projSelRect, Qt::ContainsItemShape);
     for (auto* geoObject : selList) {
         geoObject->setSelected(!geoObject->isSelected());
@@ -374,7 +373,7 @@ void QGVMapQGView::objectClick(QMouseEvent* event)
     if (event->button() != Qt::LeftButton) {
         return;
     }
-    const QPointF projPos = mGeoMap->geoView()->mapToScene(event->pos());
+    const QPointF projPos = mapToScene(event->pos());
     auto geoObjects = mGeoMap->search(projPos, Qt::ContainsItemShape);
     if (geoObjects.isEmpty()) {
         return;
@@ -404,7 +403,7 @@ void QGVMapQGView::objectDoubleClick(QMouseEvent* event)
     if (event->button() != Qt::LeftButton) {
         return;
     }
-    const QPointF projPos = mGeoMap->geoView()->mapToScene(event->pos());
+    const QPointF projPos = mapToScene(event->pos());
     auto geoObjects = mGeoMap->search(projPos, Qt::ContainsItemShape);
     if (geoObjects.isEmpty()) {
         return;
