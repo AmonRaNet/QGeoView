@@ -164,6 +164,15 @@ void QGVDrawItem::projOnMouseDoubleClick(const QPointF& projPos)
     }
 }
 
+void QGVDrawItem::projOnObjectStartMove(const QPointF& /*projPos*/)
+{}
+
+void QGVDrawItem::projOnObjectStopMove(const QPointF& /*projPos*/)
+{}
+
+void QGVDrawItem::projOnObjectMovePos(const QPointF& /*projPos*/)
+{}
+
 void QGVDrawItem::onProjection(QGVMap* geoMap)
 {
     QGVItem::onProjection(geoMap);

@@ -49,7 +49,8 @@ enum class MapState
     Idle,
     Animation,
     Wheel,
-    Moving,
+    MovingMap,
+    MovingObjects,
     SelectionRect,
 };
 
@@ -61,6 +62,7 @@ enum class MouseAction : int
     Selection = 0x8,
     Tooltip = 0x10,
     ContextMenu = 0x20,
+    MoveObjects = 0x40,
     All = 0xFF,
 };
 Q_DECLARE_FLAGS(MouseActions, MouseAction)
@@ -75,6 +77,7 @@ enum class ItemFlag : int
     SelectCustom = 0x20,
     Transformed = 0x40,
     Clickable = 0x80,
+    Movable = 0x100,
 };
 Q_DECLARE_FLAGS(ItemFlags, ItemFlag)
 

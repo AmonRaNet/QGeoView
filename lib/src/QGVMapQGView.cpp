@@ -140,6 +140,7 @@ void QGVMapQGView::changeState(QGV::MapState state)
         mWheelProjAnchor = QPointF();
         mWheelBestFactor = getMinScale();
         mMoveProjAnchor = QPointF();
+        mMovingObject = nullptr;
         mSelectionRect->hideRect();
     }
     mGeoMap->onMapState(mState);
@@ -276,8 +277,29 @@ void QGVMapQGView::startMoving(QMouseEvent* event)
         return;
     }
     event->accept();
-    changeState(QGV::MapState::Moving);
+    changeState(QGV::MapState::MovingMap);
     mMoveProjAnchor = mapToScene(event->pos());
+}
+
+void QGVMapQGView::startMovingObject(QMouseEvent* event)
+{
+    if (!mMouseActions.testFlag(QGV::MouseAction::MoveObjects)) {
+        changeState(QGV::MapState::Idle);
+        return;
+    }
+    const QPointF projPos = mapToScene(event->pos());
+    auto geoObjects = mGeoMap->search(projPos, Qt::ContainsItemShape);
+    if (geoObjects.isEmpty()) {
+        return;
+    }
+    auto* geoObject = geoObjects.first();
+    if (!geoObject->isFlag(QGV::ItemFlag::Movable)) {
+        changeState(QGV::MapState::Idle);
+        return;
+    }
+    mMovingObject = geoObject;
+    mMovingObject->projOnObjectStartMove(projPos);
+    changeState(QGV::MapState::MovingObjects);
 }
 
 void QGVMapQGView::startSelectionRect(QMouseEvent* event)
@@ -301,6 +323,14 @@ void QGVMapQGView::stopSelectionRect(QMouseEvent* event)
     } else if (event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::ShiftModifier) {
         selectObjectsByRect(event, rect);
     }
+}
+
+void QGVMapQGView::stopMovingObject(QMouseEvent* event)
+{
+    Q_ASSERT(mMovingObject);
+    const QPointF projPos = mapToScene(event->pos());
+    mMovingObject->projOnObjectStopMove(projPos);
+    changeState(QGV::MapState::Idle);
 }
 
 void QGVMapQGView::zoomArea(QMouseEvent* event, QRect areaRect)
@@ -331,8 +361,7 @@ void QGVMapQGView::selectObjectsByRect(QMouseEvent* event, QRect selRect)
     if (event->modifiers() == Qt::ShiftModifier) {
         mGeoMap->unselectAll();
     }
-    const QRectF projSelRect = QRectF(mGeoMap->geoView()->mapToScene(selRect.topLeft()),
-                                      mGeoMap->geoView()->mapToScene(selRect.bottomRight()));
+    const QRectF projSelRect = QRectF(mapToScene(selRect.topLeft()), mapToScene(selRect.bottomRight()));
     auto selList = mGeoMap->search(projSelRect, Qt::ContainsItemShape);
     for (auto* geoObject : selList) {
         geoObject->setSelected(!geoObject->isSelected());
@@ -344,7 +373,7 @@ void QGVMapQGView::objectClick(QMouseEvent* event)
     if (event->button() != Qt::LeftButton) {
         return;
     }
-    const QPointF projPos = mGeoMap->geoView()->mapToScene(event->pos());
+    const QPointF projPos = mapToScene(event->pos());
     auto geoObjects = mGeoMap->search(projPos, Qt::ContainsItemShape);
     if (geoObjects.isEmpty()) {
         return;
@@ -374,7 +403,7 @@ void QGVMapQGView::objectDoubleClick(QMouseEvent* event)
     if (event->button() != Qt::LeftButton) {
         return;
     }
-    const QPointF projPos = mGeoMap->geoView()->mapToScene(event->pos());
+    const QPointF projPos = mapToScene(event->pos());
     auto geoObjects = mGeoMap->search(projPos, Qt::ContainsItemShape);
     if (geoObjects.isEmpty()) {
         return;
@@ -422,6 +451,18 @@ void QGVMapQGView::moveMap(QMouseEvent* event)
     const double xDelta = (mMoveProjAnchor.x() - projMouse.x());
     const double yDelta = (mMoveProjAnchor.y() - projMouse.y());
     cameraMove(projCenter + QPointF(xDelta, yDelta));
+}
+
+void QGVMapQGView::moveObject(QMouseEvent* event)
+{
+    if (!mMouseActions.testFlag(QGV::MouseAction::MoveObjects)) {
+        changeState(QGV::MapState::Idle);
+        return;
+    }
+    Q_ASSERT(mMovingObject);
+    event->accept();
+    const QPointF projMouse = mapToScene(event->pos());
+    mMovingObject->projOnObjectMovePos(projMouse);
 }
 
 void QGVMapQGView::unselectAll(QMouseEvent* event)
@@ -472,7 +513,9 @@ void QGVMapQGView::mousePressEvent(QMouseEvent* event)
     event->ignore();
     objectClick(event);
     if (event->button() == Qt::LeftButton) {
-        if (event->modifiers() == Qt::NoModifier) {
+        if (event->modifiers() == Qt::AltModifier) {
+            startMovingObject(event);
+        } else if (event->modifiers() == Qt::NoModifier) {
             startMoving(event);
         }
     } else if (event->button() == Qt::RightButton) {
@@ -484,7 +527,9 @@ void QGVMapQGView::mousePressEvent(QMouseEvent* event)
 void QGVMapQGView::mouseReleaseEvent(QMouseEvent* event)
 {
     event->ignore();
-    if (mState == QGV::MapState::SelectionRect) {
+    if (mState == QGV::MapState::MovingObjects) {
+        stopMovingObject(event);
+    } else if (mState == QGV::MapState::SelectionRect) {
         if (mSelectionRect->isSelection()) {
             stopSelectionRect(event);
         } else {
@@ -501,8 +546,10 @@ void QGVMapQGView::mouseMoveEvent(QMouseEvent* event)
     event->ignore();
     if (mState == QGV::MapState::Wheel) {
         moveForWheel(event);
-    } else if (mState == QGV::MapState::Moving) {
+    } else if (mState == QGV::MapState::MovingMap) {
         moveMap(event);
+    } else if (mState == QGV::MapState::MovingObjects) {
+        moveObject(event);
     } else if (mState == QGV::MapState::SelectionRect) {
         moveForRect(event);
     }
