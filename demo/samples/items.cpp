@@ -15,9 +15,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, see https://www.gnu.org/licenses.
  ****************************************************************************/
-
 #include "items.h"
 #include "ellipse.h"
+#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#include <random>
+#endif
 
 ItemsDemo::ItemsDemo(QGVMap* geoMap, QObject* parent)
     : DemoItem(geoMap, SelectorDialog::Multi, parent)
@@ -64,7 +66,11 @@ void ItemsDemo::onInit()
          * Items will be owned by layer.
          */
         for (int i = 0; i < 10; i++) {
+#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+            auto radius = 100 + std::rand()%1000;
+#else
             auto radius = 100 + qrand() % 1000;
+#endif
             layer->addItem(new Ellipse(randRect(targetArea(), QSizeF(radius, radius)), color));
         }
     }
