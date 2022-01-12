@@ -58,7 +58,7 @@ QGV::GeoPos DemoItem::randPos(const QGV::GeoRect& targetArea)
     const double latRange = targetArea.latTop() - targetArea.latBottom();
     const double lonRange = targetArea.lonRigth() - targetArea.lonLeft();
     static const int range = 1000;
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return { targetArea.latBottom() + latRange * (std::rand() % range) / range,
              targetArea.lonLeft() + lonRange * (std::rand() % range) / range };
 #else
