@@ -66,8 +66,8 @@ void ItemsDemo::onInit()
          * Items will be owned by layer.
          */
         for (int i = 0; i < 10; i++) {
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
-            auto radius = 100 + std::rand()%1000;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            auto radius = 100 + std::rand() % 1000;
 #else
             auto radius = 100 + qrand() % 1000;
 #endif

@@ -83,7 +83,7 @@ QGV::GeoRect DemoItem::randRect(const QGV::GeoRect& targetArea, int baseSize)
 QSizeF DemoItem::randSize(int baseSize)
 {
     const int range = -baseSize / 2;
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return QSize(baseSize + (std::rand() % range), baseSize + (std::rand() % range));
 #else
     return QSize(baseSize + (qrand() % range), baseSize + (qrand() % range));
