@@ -17,7 +17,7 @@
  ****************************************************************************/
 
 #include "demoitem.h"
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <random>
 #endif
 
@@ -59,7 +59,7 @@ QGV::GeoPos DemoItem::randPos(const QGV::GeoRect& targetArea)
     const double latRange = targetArea.latTop() - targetArea.latBottom();
     const double lonRange = targetArea.lonRigth() - targetArea.lonLeft();
     static const int range = 1000;
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return { targetArea.latBottom() + latRange * (std::rand() % range) / range,
              targetArea.lonLeft() + lonRange * (std::rand() % range) / range };
 #else
@@ -84,7 +84,7 @@ QGV::GeoRect DemoItem::randRect(const QGV::GeoRect& targetArea, int baseSize)
 QSizeF DemoItem::randSize(int baseSize)
 {
     const int range = -baseSize / 2;
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return QSize(baseSize + (std::rand() % range), baseSize + (std::rand() % range));
 #else
     return QSize(baseSize + (qrand() % range), baseSize + (qrand() % range));

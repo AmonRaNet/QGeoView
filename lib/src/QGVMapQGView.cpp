@@ -240,10 +240,10 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
     event->accept();
     if (mState != QGV::MapState::Wheel) {
         changeState(QGV::MapState::Wheel);
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         QPoint pos(event->position().x(), event->position().y());
-        mWheelMouseArea = QRect(pos, QSize(1, 1))
-                                  .adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
+        mWheelMouseArea =
+                QRect(pos, QSize(1, 1)).adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
         mWheelProjAnchor = mapToScene(pos);
 #else
         mWheelMouseArea = QRect(event->pos(), QSize(1, 1))
@@ -253,7 +253,7 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
         mWheelBestFactor = mScale;
     } else {
         if (mWheelBestFactor < mScale) {
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             QPoint pos(event->position().x(), event->position().y());
             mWheelProjAnchor = mapToScene(pos);
 #else
@@ -266,7 +266,7 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
     const QGVCameraState oldState = getCamera();
     blockCameraUpdate();
     double newScale = mScale;
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     if (event->angleDelta().y() > 0)
 #else
     if (event->delta() > 0)
@@ -277,7 +277,7 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
         newScale /= wheelExponentUp;
     }
     cameraScale(newScale);
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QPoint wheelPos(event->position().x(), event->position().y());
     const QPointF projMouse = mapToScene(wheelPos);
 #else
