@@ -11,7 +11,7 @@ if (NOT Qt6_FOUND)
    message("Qt6 components not found.  Attempting to find Qt5 components...")
    find_package(Qt5 REQUIRED COMPONENTS
                 Core
-                Gui 
+                Gui
                 Widgets
                 Network
                )

@@ -75,5 +75,5 @@ else()
                           Qt5::Gui
                           Qt5::Widgets
                           QGeoView
-                         )   
+                         )
 endif()
