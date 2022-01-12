@@ -16,7 +16,7 @@
  * along with this program; if not, see https://www.gnu.org/licenses.
  ****************************************************************************/
 #include "demoitem.h"
-#if QT_VERSION > QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <random>
 #endif
 
