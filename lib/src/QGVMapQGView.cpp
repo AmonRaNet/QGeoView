@@ -240,13 +240,25 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
     event->accept();
     if (mState != QGV::MapState::Wheel) {
         changeState(QGV::MapState::Wheel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        QPoint pos(event->position().x(), event->position().y());
+        mWheelMouseArea =
+                QRect(pos, QSize(1, 1)).adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
+        mWheelProjAnchor = mapToScene(pos);
+#else
         mWheelMouseArea = QRect(event->pos(), QSize(1, 1))
                                   .adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
         mWheelProjAnchor = mapToScene(event->pos());
+#endif
         mWheelBestFactor = mScale;
     } else {
         if (mWheelBestFactor < mScale) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            QPoint pos(event->position().x(), event->position().y());
+            mWheelProjAnchor = mapToScene(pos);
+#else
             mWheelProjAnchor = mapToScene(event->pos());
+#endif
             mWheelBestFactor = mScale;
         }
     }
@@ -254,13 +266,23 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
     const QGVCameraState oldState = getCamera();
     blockCameraUpdate();
     double newScale = mScale;
-    if (event->delta() > 0) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    if (event->angleDelta().y() > 0)
+#else
+    if (event->delta() > 0)
+#endif
+    {
         newScale *= wheelExponentDown;
     } else {
         newScale /= wheelExponentUp;
     }
     cameraScale(newScale);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QPoint wheelPos(event->position().x(), event->position().y());
+    const QPointF projMouse = mapToScene(wheelPos);
+#else
     const QPointF projMouse = mapToScene(event->pos());
+#endif
     const double xDelta = (projMouse.x() - mWheelProjAnchor.x());
     const double yDelta = (projMouse.y() - mWheelProjAnchor.y());
     if (!qFuzzyIsNull(xDelta) || !qFuzzyIsNull(yDelta)) {
