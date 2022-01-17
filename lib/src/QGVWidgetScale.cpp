@@ -30,6 +30,9 @@ const int minLengthPixel = 130;
 
 QGVWidgetScale::QGVWidgetScale(Qt::Orientation orientation)
 {
+    mDistanceUnits = DistanceUnits::NauticalMiles;
+    mUseMetersForSmallDistance = false;
+
     mAutoAdjust = true;
     mScaleMeters = 0;
     mScalePixels = 0;
@@ -77,11 +80,49 @@ Qt::Orientation QGVWidgetScale::getOrientation() const
 
 QString QGVWidgetScale::getDistanceLabel(int meters, int accuracy) const
 {
-    if (meters > 1000) {
-        return tr("%1 km").arg(QString::number(static_cast<double>(meters) / 1000, 'f', accuracy));
-    } else {
-        return tr("%1 m").arg(QString::number(static_cast<double>(meters), 'f', accuracy));
+    QString result = "";
+    if ( mDistanceUnits == DistanceUnits::Kilometers) {
+        if (mUseMetersForSmallDistance) {
+            if (meters > 1000) {
+                result = tr("%1 km").arg(QString::number(static_cast<double>(meters) / 1000, 'f', accuracy));
+            } else {
+                result = tr("%1 m").arg(QString::number(static_cast<double>(meters), 'f', accuracy));
+            }
+        } else {
+            result = tr("%1 m").arg(QString::number(static_cast<double>(meters), 'f', accuracy));
+        }
+    } else if (mDistanceUnits == DistanceUnits::NauticalMiles) {
+        double nauticalMiles = meters / 1852.0;
+        if (mUseMetersForSmallDistance) {
+            if (nauticalMiles > 1) {
+                result = tr("%1 nm").arg(QString::number(static_cast<double>(nauticalMiles), 'f', accuracy));
+            } else {
+                result = tr("%1 m").arg(QString::number(static_cast<double>(meters), 'f', accuracy));
+            }
+        } else {
+            if (nauticalMiles<1) {
+                accuracy = 2;
+            }
+            result = tr("%1 nm").arg(QString::number(static_cast<double>(nauticalMiles), 'f', accuracy));
+        }
+    } else if (mDistanceUnits == DistanceUnits::Miles) {
+
+        double miles = meters / 1609.0;
+        if (mUseMetersForSmallDistance) {
+            if (miles > 1) {
+                result = tr("%1 mi").arg(QString::number(static_cast<double>(miles), 'f', accuracy));
+            } else {
+                result = tr("%1 m").arg(QString::number(static_cast<double>(meters), 'f', accuracy));
+            }
+        } else {
+            if (miles<1) {
+                accuracy = 2;
+            }
+            result = tr("%1 mi").arg(QString::number(static_cast<double>(miles), 'f', accuracy));
+        }
+
     }
+    return result;
 }
 
 void QGVWidgetScale::onCamera(const QGVCameraState& oldState, const QGVCameraState& newState)
@@ -162,4 +203,12 @@ void QGVWidgetScale::paintEvent(QPaintEvent* /*event*/)
     textRect.moveCenter(paintRect.center());
     painter.setPen(QPen());
     painter.drawText(textRect, Qt::AlignCenter, getDistanceLabel(mScaleMeters));
+}
+void QGVWidgetScale::setDistanceUnits(DistanceUnits distanceUnits)
+{
+    mDistanceUnits = distanceUnits;
+}
+void QGVWidgetScale::setUseMetersForSmallDistance(bool useMetersForSmallDistance)
+{
+    mUseMetersForSmallDistance = useMetersForSmallDistance;
 }

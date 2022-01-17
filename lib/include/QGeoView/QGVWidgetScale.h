@@ -19,6 +19,7 @@
 #pragma once
 
 #include "QGVWidget.h"
+#include "utils/DistanceUnits.hpp"
 
 class QGV_LIB_DECL QGVWidgetScale : public QGVWidget
 {
@@ -35,6 +36,9 @@ public:
 
     QString getDistanceLabel(int meters, int accuracy = 0) const;
 
+    void setDistanceUnits(DistanceUnits distanceUnits);
+    void setUseMetersForSmallDistance(bool useMetersForSmallDistance);
+
 private:
     void onCamera(const QGVCameraState& oldState, const QGVCameraState& newState) override;
     void paintEvent(QPaintEvent* event) override;
@@ -44,4 +48,7 @@ private:
     bool mAutoAdjust;
     int mScaleMeters;
     int mScalePixels;
+
+    DistanceUnits mDistanceUnits;
+    bool mUseMetersForSmallDistance;
 };

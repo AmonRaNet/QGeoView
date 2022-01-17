@@ -53,7 +53,7 @@ add_library(qgeoview SHARED
     src/QGVWidgetScale.cpp
     src/QGVWidgetZoom.cpp
     src/QGVWidgetText.cpp
-)
+        src/utils/DistanceUnits.cpp include/QGeoView/utils/DistanceUnits.hpp)
 
 target_include_directories(qgeoview
     PUBLIC
