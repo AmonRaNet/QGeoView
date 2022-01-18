@@ -74,6 +74,10 @@ QGeoView uses [SemVer](http://semver.org/) for versioning. For the versions avai
 
 **Andrey Yaroshenko** ([AmonRaNet](https://github.com/AmonRaNet))
 
+## Credits
+
+**bakerb845** for helping with Qt6 adaptation
+
 ## License
 
 This project is licensed under the [LGPL License v3](https://www.gnu.org/licenses/lgpl-3.0.html).

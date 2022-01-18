@@ -93,3 +93,21 @@ void Rectangle::projOnMouseDoubleClick(const QPointF& projPos)
     setOpacity(1.0);
     qInfo() << "double click" << projPos;
 }
+
+void Rectangle::projOnObjectStartMove(const QPointF& projPos)
+{
+    qInfo() << "object move started at" << projPos;
+}
+
+void Rectangle::projOnObjectMovePos(const QPointF& projPos)
+{
+    mProjRect.moveCenter(projPos);
+    mGeoRect = getMap()->getProjection()->projToGeo(mProjRect);
+    refresh();
+    qInfo() << "object moved" << mGeoRect;
+}
+
+void Rectangle::projOnObjectStopMove(const QPointF& projPos)
+{
+    qInfo() << "object move stopped" << projPos;
+}
