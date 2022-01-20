@@ -66,9 +66,9 @@ or use demo example to see all QGeoView features:
 <build-dir>/qgeoview-demo
 ```
 
-## Versioning
+## Community
 
-QGeoView uses [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/AmonRaNet/QGeoView/tags).
+For additional help, join in the [AmonRaNet Discord](https://discord.gg/bxYJsrkBWa).
 
 ## Author
 
@@ -77,6 +77,10 @@ QGeoView uses [SemVer](http://semver.org/) for versioning. For the versions avai
 ## Credits
 
 **bakerb845** for helping with Qt6 adaptation
+
+## Versioning
+
+QGeoView uses [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/AmonRaNet/QGeoView/tags).
 
 ## License
 
