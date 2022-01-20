@@ -1,21 +1,15 @@
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 COMPONENTS
+# Set the QT version
+set(QT_VERSION 5)
+
+find_package(Qt${QT_VERSION} REQUIRED COMPONENTS
              Core
              Gui
              Widgets
              Network
             )
-if (NOT Qt6_FOUND)
-   message("Qt6 components not found.  Attempting to find Qt5 components...")
-   find_package(Qt5 REQUIRED COMPONENTS
-                Core
-                Gui
-                Widgets
-                Network
-               )
-endif()
 
 add_library(qgeoview SHARED
     include/QGeoView/QGVGlobal.h
@@ -76,24 +70,14 @@ target_compile_definitions(qgeoview
         QGV_EXPORT
 )
 
-if (Qt6_FOUND)
-    target_link_libraries(qgeoview
-                          PRIVATE
-                          Qt6::Core
-                          Qt6::Gui
-                          Qt6::Widgets
-                          Qt6::Network
-                         )
-else()
-    target_link_libraries(qgeoview
-                          PRIVATE
-                          Qt5::Core
-                          Qt5::Gui
-                          Qt5::Widgets
-                          Qt5::Network
-                         )
-endif()
 
+target_link_libraries(qgeoview
+        PRIVATE
+        Qt${QT_VERSION}::Core
+        Qt${QT_VERSION}::Gui
+        Qt${QT_VERSION}::Widgets
+        Qt${QT_VERSION}::Network
+        )
 
 add_library(QGeoView ALIAS qgeoview)
 

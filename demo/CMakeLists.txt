@@ -5,21 +5,16 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt6 COMPONENTS
-             Core
-             Gui
-             Network
-             Widgets
-            )
-if (NOT Qt6_FOUND)
-   message("Qt6 components not found.  Attempting to find Qt5 components...")
-   find_package(Qt5 REQUIRED COMPONENTS
-                Core
-                Gui
-                Widgets
-                Network
-               )
-endif()
+# Set the QT version
+set(QT_VERSION 5)
+
+find_package(Qt${QT_VERSION} REQUIRED COMPONENTS
+        Core
+        Gui
+        Widgets
+        Network
+        )
+
 
 add_executable(qgeoview-demo
     main.cpp
@@ -58,22 +53,13 @@ add_executable(qgeoview-demo
     samples/mytile.h
 )
 
-if (Qt6_FOUND)
-    target_link_libraries(qgeoview-demo
-                          PRIVATE
-                          Qt6::Core
-                          Qt6::Network
-                          Qt6::Gui
-                          Qt6::Widgets
-                          QGeoView
-                         )
-else()
-    target_link_libraries(qgeoview-demo
-                          PRIVATE
-                          Qt5::Core
-                          Qt5::Network
-                          Qt5::Gui
-                          Qt5::Widgets
-                          QGeoView
-                         )
-endif()
+
+target_link_libraries(qgeoview-demo
+        PRIVATE
+        Qt${QT_VERSION}::Core
+        Qt${QT_VERSION}::Network
+        Qt${QT_VERSION}::Gui
+        Qt${QT_VERSION}::Widgets
+        QGeoView
+        )
+
