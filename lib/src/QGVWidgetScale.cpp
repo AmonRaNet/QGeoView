@@ -18,6 +18,7 @@
 
 #include "QGVWidgetScale.h"
 #include "QGVMapQGView.h"
+#include "QGVUtils.h"
 
 #include <QPaintEvent>
 #include <QPainter>
@@ -30,6 +31,9 @@ const int minLengthPixel = 130;
 
 QGVWidgetScale::QGVWidgetScale(Qt::Orientation orientation)
 {
+    mDistanceUnits = QGV::DistanceUnits::Kilometers;
+    mUseMetersForSmallDistance = true;
+
     mAutoAdjust = true;
     mScaleMeters = 0;
     mScalePixels = 0;
@@ -75,12 +79,38 @@ Qt::Orientation QGVWidgetScale::getOrientation() const
     return mOrientation;
 }
 
-QString QGVWidgetScale::getDistanceLabel(int meters, int accuracy) const
+void QGVWidgetScale::setDistanceUnits(QGV::DistanceUnits distanceUnits)
 {
-    if (meters > 1000) {
-        return tr("%1 km").arg(QString::number(static_cast<double>(meters) / 1000, 'f', accuracy));
+    mDistanceUnits = distanceUnits;
+}
+
+QGV::DistanceUnits QGVWidgetScale::getDistanceUnits() const
+{
+    return mDistanceUnits;
+}
+
+void QGVWidgetScale::setUseMetersForSmallDistance(bool useMetersForSmallDistance)
+{
+    mUseMetersForSmallDistance = useMetersForSmallDistance;
+}
+
+bool QGVWidgetScale::getUseMetersForSmallDistance() const
+{
+    return mUseMetersForSmallDistance;
+}
+
+QString QGVWidgetScale::getDistanceLabel(int meters) const
+{
+    const double distanceValue = QGV::metersToDistance(meters, mDistanceUnits);
+    if (distanceValue >= 1 || (distanceValue < 1 && !mUseMetersForSmallDistance)) {
+        const int accuracy = distanceValue >= 1 ? 0 : 2;
+        return tr("%1 %2")
+                .arg(QString::number(static_cast<double>(distanceValue), 'f', accuracy))
+                .arg(QGV::unitToString(mDistanceUnits));
     } else {
-        return tr("%1 m").arg(QString::number(static_cast<double>(meters), 'f', accuracy));
+        return tr("%1 %2")
+                .arg(QString::number(static_cast<double>(meters), 'f', 0))
+                .arg(QGV::unitToString(QGV::DistanceUnits::Meters));
     }
 }
 
