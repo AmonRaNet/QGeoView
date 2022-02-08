@@ -33,9 +33,15 @@ public:
     void setOrientation(Qt::Orientation orientation);
     Qt::Orientation getOrientation() const;
 
-    QString getDistanceLabel(int meters, int accuracy = 0) const;
+    void setDistanceUnits(QGV::DistanceUnits distanceUnits);
+    QGV::DistanceUnits getDistanceUnits() const;
 
-private:
+    void setUseMetersForSmallDistance(bool useMetersForSmallDistance);
+    bool getUseMetersForSmallDistance() const;
+
+protected:
+    QString getDistanceLabel(int meters) const;
+
     void onCamera(const QGVCameraState& oldState, const QGVCameraState& newState) override;
     void paintEvent(QPaintEvent* event) override;
 
@@ -44,4 +50,6 @@ private:
     bool mAutoAdjust;
     int mScaleMeters;
     int mScalePixels;
+    QGV::DistanceUnits mDistanceUnits;
+    bool mUseMetersForSmallDistance;
 };

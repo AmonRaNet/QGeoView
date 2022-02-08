@@ -54,6 +54,14 @@ enum class MapState
     SelectionRect,
 };
 
+enum class DistanceUnits
+{
+    Meters,
+    Kilometers,
+    NauticalMiles,
+    Miles,
+};
+
 enum class MouseAction : int
 {
     Move = 0x1,

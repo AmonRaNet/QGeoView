@@ -6,6 +6,7 @@ SOURCES += \
     $$PWD/src/QGVCamera.cpp \
     $$PWD/src/QGVDrawItem.cpp \
     $$PWD/src/QGVGlobal.cpp \
+    $$PWD/src/QGVUtils.cpp \
     $$PWD/src/QGVImage.cpp \
     $$PWD/src/QGVItem.cpp \
     $$PWD/src/QGVLayer.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     $$PWD/include/QGeoView/QGVCamera.h \
     $$PWD/include/QGeoView/QGVDrawItem.h \
     $$PWD/include/QGeoView/QGVGlobal.h \
+    $$PWD/include/QGeoView/QGVUtils.h \
     $$PWD/include/QGeoView/QGVImage.h \
     $$PWD/include/QGeoView/QGVItem.h \
     $$PWD/include/QGeoView/QGVLayer.h \
