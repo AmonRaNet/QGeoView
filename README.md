@@ -77,6 +77,7 @@ For additional help, join in the [AmonRaNet Discord](https://discord.gg/bxYJsrkB
 ## Credits
 
 **bakerb845** for helping with Qt6 adaptation
+**raffmont** for adding new features and capabilities
 
 ## Versioning
 
