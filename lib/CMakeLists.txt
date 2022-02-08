@@ -1,24 +1,24 @@
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 COMPONENTS
-             Core
-             Gui
-             Widgets
-             Network
-            )
+# Set the QT version
+find_package(Qt6 COMPONENTS Core QUIET)
 if (NOT Qt6_FOUND)
-   message("Qt6 components not found.  Attempting to find Qt5 components...")
-   find_package(Qt5 REQUIRED COMPONENTS
-                Core
-                Gui
-                Widgets
-                Network
-               )
+    set(QT_VERSION 5 CACHE STRING "Qt version for QGeoView")
+else()
+    set(QT_VERSION 6 CACHE STRING "Qt version for QGeoView")
 endif()
+
+find_package(Qt${QT_VERSION} REQUIRED COMPONENTS
+     Core
+     Gui
+     Widgets
+     Network
+)
 
 add_library(qgeoview SHARED
     include/QGeoView/QGVGlobal.h
+    include/QGeoView/QGVUtils.h
     include/QGeoView/QGVProjection.h
     include/QGeoView/QGVProjectionEPSG3857.h
     include/QGeoView/QGVCamera.h
@@ -40,6 +40,7 @@ add_library(qgeoview SHARED
     include/QGeoView/QGVWidgetScale.h
     include/QGeoView/QGVWidgetZoom.h
     include/QGeoView/QGVWidgetText.h
+    src/QGVUtils.cpp
     src/QGVGlobal.cpp
     src/QGVProjection.cpp
     src/QGVProjectionEPSG3857.cpp
@@ -76,34 +77,24 @@ target_compile_definitions(qgeoview
         QGV_EXPORT
 )
 
-if (Qt6_FOUND)
-    target_link_libraries(qgeoview
-                          PRIVATE
-                          Qt6::Core
-                          Qt6::Gui
-                          Qt6::Widgets
-                          Qt6::Network
-                         )
-else()
-    target_link_libraries(qgeoview
-                          PRIVATE
-                          Qt5::Core
-                          Qt5::Gui
-                          Qt5::Widgets
-                          Qt5::Network
-                         )
-endif()
 
+target_link_libraries(qgeoview
+    PRIVATE
+        Qt${QT_VERSION}::Core
+        Qt${QT_VERSION}::Gui
+        Qt${QT_VERSION}::Widgets
+        Qt${QT_VERSION}::Network
+)
 
 add_library(QGeoView ALIAS qgeoview)
 
 install(TARGETS qgeoview LIBRARY
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib/static
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib/static
 )
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
-        DESTINATION include
-        FILES_MATCHING PATTERN "*.h*"
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.h*"
 )
