@@ -24,10 +24,12 @@
 #include <QPointF>
 #include <QRectF>
 
+#ifndef QGV_LIB_DECL
 #if defined(QGV_EXPORT)
 #define QGV_LIB_DECL Q_DECL_EXPORT
 #else
 #define QGV_LIB_DECL Q_DECL_IMPORT
+#endif
 #endif
 
 namespace QGV {
