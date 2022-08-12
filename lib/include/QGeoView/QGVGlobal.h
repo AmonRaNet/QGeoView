@@ -77,6 +77,13 @@ enum class MouseAction : int
 };
 Q_DECLARE_FLAGS(MouseActions, MouseAction)
 
+enum class SelectionRectAction
+{
+    Zoom,
+    Selection,
+    InvertedSelection,
+};
+
 enum class ItemFlag : int
 {
     IgnoreScale = 0x1,

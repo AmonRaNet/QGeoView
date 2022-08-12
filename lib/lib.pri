@@ -16,6 +16,7 @@ SOURCES += \
     $$PWD/src/QGVLayerTiles.cpp \
     $$PWD/src/QGVLayerTilesOnline.cpp \
     $$PWD/src/QGVMap.cpp \
+    $$PWD/src/QGVMapActions.cpp \
     $$PWD/src/QGVMapQGItem.cpp \
     $$PWD/src/QGVMapQGView.cpp \
     $$PWD/src/QGVMapRubberBand.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     $$PWD/include/QGeoView/QGVLayerTiles.h \
     $$PWD/include/QGeoView/QGVLayerTilesOnline.h \
     $$PWD/include/QGeoView/QGVMap.h \
+    $$PWD/include/QGeoView/QGVMapActions.h \
     $$PWD/include/QGeoView/QGVMapQGItem.h \
     $$PWD/include/QGeoView/QGVMapQGView.h \
     $$PWD/include/QGeoView/QGVMapRubberBand.h \
