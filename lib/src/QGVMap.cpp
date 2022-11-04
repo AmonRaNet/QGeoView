@@ -252,6 +252,17 @@ QList<QGVDrawItem*> QGVMap::search(const QRectF& projRect, Qt::ItemSelectionMode
     return result;
 }
 
+QList<QGVDrawItem*> QGVMap::search(const QPolygonF& projPolygon, Qt::ItemSelectionMode mode) const
+{
+    QList<QGVDrawItem*> result;
+    for (QGraphicsItem* item : geoView()->scene()->items(projPolygon, mode)) {
+        QGVDrawItem* geoObject = QGVMapQGItem::geoObjectFromQGItem(item);
+        if (geoObject)
+            result << geoObject;
+    }
+    return result;
+}
+
 QPixmap QGVMap::grabMapView(bool includeWidgets) const
 {
     const QPixmap pixmap = (includeWidgets) ? geoView()->grab(geoView()->rect())

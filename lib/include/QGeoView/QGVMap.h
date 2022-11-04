@@ -73,6 +73,8 @@ public:
 
     QList<QGVDrawItem*> search(const QPointF& projPos, Qt::ItemSelectionMode mode = Qt::ContainsItemShape) const;
     QList<QGVDrawItem*> search(const QRectF& projRect, Qt::ItemSelectionMode mode = Qt::ContainsItemShape) const;
+    QList<QGVDrawItem*> search(const QPolygonF& projPolygon, Qt::ItemSelectionMode mode = Qt::ContainsItemShape) const;
+
     QPixmap grabMapView(bool includeWidgets = true) const;
 
     QPointF mapToProj(QPoint pos);

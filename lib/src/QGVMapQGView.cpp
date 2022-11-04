@@ -383,8 +383,12 @@ void QGVMapQGView::selectObjectsByRect(QMouseEvent* event, QRect selRect)
     if (event->modifiers() == Qt::ShiftModifier) {
         mGeoMap->unselectAll();
     }
-    const QRectF projSelRect = QRectF(mapToScene(selRect.topLeft()), mapToScene(selRect.bottomRight()));
-    auto selList = mGeoMap->search(projSelRect, Qt::ContainsItemShape);
+
+    const QPolygonF projSelPolygon = QPolygonF() << mapToScene(selRect.topLeft()) << mapToScene(selRect.topRight())
+                                                 << mapToScene(selRect.bottomRight())
+                                                 << mapToScene(selRect.bottomLeft()) << mapToScene(selRect.topLeft());
+
+    auto selList = mGeoMap->search(projSelPolygon, Qt::ContainsItemShape);
     for (auto* geoObject : selList) {
         geoObject->setSelected(!geoObject->isSelected());
     }
