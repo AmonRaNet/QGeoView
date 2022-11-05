@@ -81,7 +81,7 @@ QGV::MouseActions QGVMapQGView::getMouseActions() const
 QGVCameraState QGVMapQGView::getCamera() const
 {
     const bool animation = mState == QGV::MapState::Animation;
-    return QGVCameraState(mGeoMap, mAzimuth, mScale, viewRect(), animation);
+    return QGVCameraState(mGeoMap, mAzimuth, mScale, viewProjRect(), animation);
 }
 
 void QGVMapQGView::cameraTo(const QGVCameraActions& actions, bool animation)
@@ -118,7 +118,7 @@ void QGVMapQGView::cleanState()
     changeState(QGV::MapState::Idle);
 }
 
-QRectF QGVMapQGView::viewRect() const
+QRectF QGVMapQGView::viewProjRect() const
 {
     return mapToScene(mViewRect).boundingRect();
 }
@@ -178,7 +178,7 @@ void QGVMapQGView::cameraRotate(double azimuth)
 void QGVMapQGView::cameraMove(const QPointF& projPos)
 {
     const QGVCameraState oldState = getCamera();
-    const QPointF oldCenter = viewRect().center();
+    const QPointF oldCenter = viewProjRect().center();
     if (oldCenter != projPos) {
         QGraphicsView::centerOn(projPos);
         applyCameraUpdate(oldState);
@@ -286,7 +286,7 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
     const double xDelta = (projMouse.x() - mWheelProjAnchor.x());
     const double yDelta = (projMouse.y() - mWheelProjAnchor.y());
     if (!qFuzzyIsNull(xDelta) || !qFuzzyIsNull(yDelta)) {
-        cameraMove(viewRect().center() - QPointF(xDelta, yDelta));
+        cameraMove(viewProjRect().center() - QPointF(xDelta, yDelta));
     }
     unblockCameraUpdate();
     applyCameraUpdate(oldState);
@@ -472,7 +472,7 @@ void QGVMapQGView::moveMap(QMouseEvent* event)
         return;
     }
     event->accept();
-    const QPointF projCenter = viewRect().center();
+    const QPointF projCenter = viewProjRect().center();
     const QPointF projMouse = mapToScene(event->pos());
     const double xDelta = (mMoveProjAnchor.x() - projMouse.x());
     const double yDelta = (mMoveProjAnchor.y() - projMouse.y());
@@ -537,50 +537,68 @@ void QGVMapQGView::wheelEvent(QWheelEvent* event)
 void QGVMapQGView::mousePressEvent(QMouseEvent* event)
 {
     event->ignore();
-    objectClick(event);
-    if (event->button() == Qt::LeftButton) {
-        if (event->modifiers() == Qt::AltModifier) {
-            startMovingObject(event);
-        } else if (event->modifiers() == Qt::NoModifier) {
-            startMoving(event);
-        }
-    } else if (event->button() == Qt::RightButton) {
-        startSelectionRect(event);
-    }
     QGraphicsView::mousePressEvent(event);
 }
 
 void QGVMapQGView::mouseReleaseEvent(QMouseEvent* event)
 {
     event->ignore();
-    if (mState == QGV::MapState::MovingObjects) {
-        stopMovingObject(event);
-    } else if (mState == QGV::MapState::SelectionRect) {
-        if (mSelectionRect->isSelection()) {
-            stopSelectionRect(event);
-        } else {
-            showMenu(event);
-        }
-    } else {
-        changeState(QGV::MapState::Idle);
-    }
     QGraphicsView::mouseReleaseEvent(event);
 }
 
 void QGVMapQGView::mouseMoveEvent(QMouseEvent* event)
 {
     event->ignore();
-    if (mState == QGV::MapState::Wheel) {
-        moveForWheel(event);
-    } else if (mState == QGV::MapState::MovingMap) {
-        moveMap(event);
-    } else if (mState == QGV::MapState::MovingObjects) {
-        moveObject(event);
-    } else if (mState == QGV::MapState::SelectionRect) {
-        moveForRect(event);
-    }
     QGraphicsView::mouseMoveEvent(event);
 }
+
+// void QGVMapQGView::mousePressEvent(QMouseEvent* event)
+//{
+//    event->ignore();
+//    objectClick(event);
+//    if (event->button() == Qt::LeftButton) {
+//        if (event->modifiers() == Qt::AltModifier) {
+//            startMovingObject(event);
+//        } else if (event->modifiers() == Qt::NoModifier) {
+//            startMoving(event);
+//        }
+//    } else if (event->button() == Qt::RightButton) {
+//        startSelectionRect(event);
+//    }
+//    QGraphicsView::mousePressEvent(event);
+//}
+
+// void QGVMapQGView::mouseReleaseEvent(QMouseEvent* event)
+//{
+//    event->ignore();
+//    if (mState == QGV::MapState::MovingObjects) {
+//        stopMovingObject(event);
+//    } else if (mState == QGV::MapState::SelectionRect) {
+//        if (mSelectionRect->isSelection()) {
+//            stopSelectionRect(event);
+//        } else {
+//            showMenu(event);
+//        }
+//    } else {
+//        changeState(QGV::MapState::Idle);
+//    }
+//    QGraphicsView::mouseReleaseEvent(event);
+//}
+
+// void QGVMapQGView::mouseMoveEvent(QMouseEvent* event)
+//{
+//    event->ignore();
+//    if (mState == QGV::MapState::Wheel) {
+//        moveForWheel(event);
+//    } else if (mState == QGV::MapState::MovingMap) {
+//        moveMap(event);
+//    } else if (mState == QGV::MapState::MovingObjects) {
+//        moveObject(event);
+//    } else if (mState == QGV::MapState::SelectionRect) {
+//        moveForRect(event);
+//    }
+//    QGraphicsView::mouseMoveEvent(event);
+//}
 
 void QGVMapQGView::mouseDoubleClickEvent(QMouseEvent* event)
 {

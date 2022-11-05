@@ -77,11 +77,19 @@ enum class MouseAction : int
 };
 Q_DECLARE_FLAGS(MouseActions, MouseAction)
 
-enum class SelectionRectAction
+enum class MapActionsState
+{
+    Idle,
+    MovingMap,
+    MovingObjects,
+    SelectionRect,
+};
+
+enum class MapSelectionMode
 {
     Zoom,
-    Selection,
-    InvertedSelection,
+    SelectionAddition,
+    SelectionReplace,
 };
 
 enum class ItemFlag : int
@@ -204,6 +212,8 @@ QGV_LIB_DECL QDebug operator<<(QDebug debug, const QGV::GeoTilePos& value);
 Q_DECLARE_METATYPE(QGV::GeoPos)
 Q_DECLARE_METATYPE(QGV::GeoRect)
 Q_DECLARE_METATYPE(QGV::GeoTilePos)
+Q_DECLARE_METATYPE(QGV::MapActionsState)
+Q_DECLARE_METATYPE(QGV::MapSelectionMode)
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGV::ItemFlags)
 

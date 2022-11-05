@@ -139,7 +139,7 @@ void QGVImage::calculateGeometry()
     if (mGeometryType == GeometryType::ByRect) {
         mProjRect = getMap()->getProjection()->geoToProj(mGeoRect);
         resetBoundary();
-        refresh();
+        repaint();
     } else if (mGeometryType == GeometryType::ByPos) {
         if (mImageSize.isEmpty() && mImage.isNull()) {
             return;
@@ -150,6 +150,6 @@ void QGVImage::calculateGeometry()
         mProjRect = QRectF(basePos - anchor, mImageSize);
         mProjAnchor = basePos;
         resetBoundary();
-        refresh();
+        repaint();
     }
 }

@@ -31,54 +31,33 @@ class QGV_LIB_DECL QGVMapActions : public QObject
 public:
     QGVMapActions(QGVMap* geoMap);
 
-    void startMovingMap(const QPointF& mousePos);
-    void startMovingObject(QGVDrawItem* object);
-    void startSelectionRect(const QPoint& mousePos, const QGV::SelectionRectAction action);
+    void startMovingMap(const QPoint& mousePos);
+    void startMovingObject(const QPoint& mousePos, QGVDrawItem* object);
+    void startSelectionRect(const QPoint& mousePos, const QGV::MapSelectionMode mode);
+
     void move(const QPoint& mousePos);
-    void stop();
 
-    void addToSelection(QGVDrawItem* object, bool unselectOthers);
-
-    void showMenu(const QPoint& mousePos);
+    void stop(const QPoint& mousePos);
 
 private:
-    void zoomArea(QRect areaRect);
-    void selectObjectsByRect(QRect selRect);
-    void objectClick(QMouseEvent* event);
-    void objectDoubleClick(QMouseEvent* event);
-    void moveForWheel(QMouseEvent* event);
-    void moveForRect(QMouseEvent* event);
-    void moveMap(QMouseEvent* event);
-    void moveObject(QMouseEvent* event);
-    void unselectAll(QMouseEvent* event);
-    void showMenu(QMouseEvent* event);
+    void changeState(QGV::MapActionsState state);
+    QPointF mapToScene(const QPoint& mousePos) const;
+    QPolygonF mapToScene(const QRect& mouseRect) const;
 
-    bool event(QEvent* event) override final;
-    void wheelEvent(QWheelEvent* event) override final;
-    void mousePressEvent(QMouseEvent* event) override final;
-    void mouseReleaseEvent(QMouseEvent* event) override final;
-    void mouseMoveEvent(QMouseEvent* event) override final;
-    void mouseDoubleClickEvent(QMouseEvent* event) override final;
-    void resizeEvent(QResizeEvent* event) override final;
-    void showEvent(QShowEvent* event) override final;
-    void keyPressEvent(QKeyEvent* event) override final;
+    void moveMap(const QPoint& mousePos);
+    void moveObject(const QPoint& mousePos);
+    void moveRect(const QPoint& mousePos);
+
+    void stopMoveObject(const QPoint& mousePos);
+    void stopRect();
+    void applyZoomRect(QRect areaRect);
+    void applySelectionRect(QRect areaRect, bool replaceSelection);
 
 private:
     QGVMap* mGeoMap;
-    unsigned int mBlockUpdateCount;
-    double mMinScale;
-    double mMaxScale;
-    double mScale;
-    double mAzimuth;
-    QGV::MouseActions mMouseActions;
-    QRect mViewRect;
-    QGV::MapState mState;
-    QRect mWheelMouseArea;
-    QPointF mWheelProjAnchor;
-    double mWheelBestFactor;
+    QGV::MapActionsState mState;
     QPointF mMoveProjAnchor;
     QGVDrawItem* mMovingObject;
-    QScopedPointer<QGraphicsScene> mQGScene;
+    QGV::MapSelectionMode mSelectionMode;
     QScopedPointer<QGVMapRubberBand> mSelectionRect;
-    QScopedPointer<QMenu> mContextMenu;
 };

@@ -45,8 +45,9 @@ public:
     void setScaleLimits(double minScale, double maxScale);
     void cleanState();
 
+    QRectF viewProjRect() const;
+
 private:
-    QRectF viewRect() const;
     void changeState(QGV::MapState state);
     void cameraScale(double scale);
     void cameraScale(const QRectF& projRect);

@@ -22,6 +22,7 @@
 
 #include "QGVCamera.h"
 #include "QGVGlobal.h"
+#include "QGVMapActions.h"
 #include "QGVProjection.h"
 
 class QGVItem;
@@ -88,7 +89,9 @@ public:
     virtual void onMapCamera(const QGVCameraState& oldState, const QGVCameraState& newState);
 
 protected:
-    void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override final;
+    void mouseReleaseEvent(QMouseEvent* event) override final;
+    void mouseMoveEvent(QMouseEvent* event) override final;
 
 Q_SIGNALS:
     void projectionChanged();
@@ -105,6 +108,7 @@ private:
     QScopedPointer<QGVProjection> mProjection;
     QScopedPointer<QGVMapQGView> mQGView;
     QScopedPointer<QGVItem> mRootItem;
+    QScopedPointer<QGVMapActions> mMapActions;
     QList<QGVWidget*> mWidgets;
     QSet<QGVItem*> mSelections;
 };

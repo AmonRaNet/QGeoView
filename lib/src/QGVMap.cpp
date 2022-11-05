@@ -50,6 +50,7 @@ QGVMap::QGVMap(QWidget* parent)
     mProjection.reset(new QGVProjectionEPSG3857());
     mQGView.reset(new QGVMapQGView(this));
     mRootItem.reset(new RootItem(this));
+    mMapActions.reset(new QGVMapActions(this));
     setLayout(new QVBoxLayout(this));
     layout()->addWidget(mQGView.data());
     refreshProjection();
@@ -361,11 +362,71 @@ void QGVMap::onMapCamera(const QGVCameraState& oldState, const QGVCameraState& n
     }
 }
 
+void QGVMap::mousePressEvent(QMouseEvent* event)
+{
+    event->accept();
+
+    // TODO: object selection by click
+    // TODO: mouse wheel
+    // TODO: context menu
+    // TODO: problem with coordinates (we map vs view)
+    // TODO: check animation state in view
+    // TODO: accept/ignore events
+    // TODO: tooltips?
+    // TODO: mouse move signal
+    // TODO: remove unused enums
+    // TODO: clean-up
+
+    const QPointF projPos = geoView()->mapToScene(event->pos());
+
+    if (event->button() == Qt::LeftButton) {
+        if (event->modifiers() == Qt::AltModifier) {
+            // Moving object under mouse
+            auto geoObjects = search(projPos, Qt::ContainsItemShape);
+            if (!geoObjects.isEmpty()) {
+                auto* geoObject = geoObjects.first();
+                mMapActions->startMovingObject(event->pos(), geoObject);
+            }
+        } else if (event->modifiers() == Qt::NoModifier) {
+            // Start moving map
+            mMapActions->startMovingMap(event->pos());
+        }
+    } else if (event->button() == Qt::RightButton) {
+        if (event->modifiers() == Qt::NoModifier) {
+            // Start selection rect for zoom
+            mMapActions->startSelectionRect(event->pos(), QGV::MapSelectionMode::Zoom);
+        } else if (event->modifiers() == Qt::ControlModifier) {
+            // Start selection rect for addition selection
+            mMapActions->startSelectionRect(event->pos(), QGV::MapSelectionMode::SelectionAddition);
+        } else if (event->modifiers() == Qt::ShiftModifier) {
+            // Start selection rect for replace selection
+            mMapActions->startSelectionRect(event->pos(), QGV::MapSelectionMode::SelectionReplace);
+        }
+    }
+
+    QWidget::mousePressEvent(event);
+}
+
+void QGVMap::mouseReleaseEvent(QMouseEvent* event)
+{
+    event->accept();
+
+    mMapActions->stop(event->pos());
+
+    QWidget::mouseReleaseEvent(event);
+}
+
 void QGVMap::mouseMoveEvent(QMouseEvent* event)
 {
+    // event->accept();
+
     if (hasMouseTracking()) {
         Q_EMIT mapMouseMove(mapToProj(event->pos()));
     }
-    event->ignore();
+
+    mMapActions->move(event->pos());
+
+    // event->ignore();
+
     QWidget::mouseMoveEvent(event);
 }

@@ -62,7 +62,8 @@ void FlagsDemo::onInit()
         { "Clickable by mouse(magenta)", new Rectangle(randRect(target, size), QGV::ItemFlag::Clickable, Qt::magenta) },
         { "Custom transform(yellow)", new Rectangle(randRect(target, size), QGV::ItemFlag::Transformed, Qt::yellow) },
         { "Movable(darkCyan)",
-          new Rectangle(randRect(target, size), QGV::ItemFlag::Movable | QGV::ItemFlag::Transformed, Qt::darkCyan) },
+          new Rectangle(
+                  randRect(target, size), QGV::ItemFlag::Movable /* | QGV::ItemFlag::Transformed*/, Qt::darkCyan) },
     };
     /*
      * Layers will be owned by map.

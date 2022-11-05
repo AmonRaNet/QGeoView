@@ -17,341 +17,159 @@
  ****************************************************************************/
 
 #include "QGVMapActions.h"
+#include "QGVDrawItem.h"
 #include "QGVMap.h"
+#include "QGVMapQGView.h"
 #include "QGVMapRubberBand.h"
 
-namespace {
-int wheelAreaMargin = 10;
-double wheelExponentDown = qPow(2, 1.0 / 5.0);
-double wheelExponentUp = qPow(2, 1.0 / 2.0);
-}
-
 QGVMapActions::QGVMapActions(QGVMap* geoMap)
-    : QGraphicsView(geoMap)
+    : mGeoMap{ geoMap }
 {
-    Q_ASSERT(geoMap);
-    mGeoMap = geoMap;
-    mBlockUpdateCount = 0;
-    mMinScale = 1e-8;
-    mMaxScale = 1e+2;
-    mScale = 1.0;
-    mAzimuth = 0.0;
-    mMouseActions = QGV::MouseAction::All;
-    mViewRect = viewport()->rect();
-    mState = QGV::MapState::Idle;
-    mQGScene.reset(new QGraphicsScene(this));
-    mSelectionRect.reset(new QGVMapRubberBand(this));
+    mState = QGV::MapActionsState::Idle;
+
+    mSelectionRect.reset(new QGVMapRubberBand(mGeoMap));
     mSelectionRect->setMinSelection(QSize(5, 5));
-    mContextMenu.reset(new QMenu(this));
-    setScene(mQGScene.data());
-    setContextMenuPolicy(Qt::NoContextMenu);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setOptimizationFlag(DontSavePainterState, true);
-    setOptimizationFlag(DontAdjustForAntialiasing, true);
-    setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
-    setRenderHint(QPainter::Antialiasing, true);
-    setCacheMode(QGraphicsView::CacheBackground);
-    setMouseTracking(true);
-    setBackgroundBrush(QBrush(Qt::lightGray));
 }
 
-void QGVMapActions::setMouseActions(QGV::MouseActions actions)
+void QGVMapActions::startMovingMap(const QPoint& mousePos)
 {
-    mMouseActions = actions;
+    qgvInfo() << "QGVMapActions startMovingMap " << mousePos;
+
+    changeState(QGV::MapActionsState::MovingMap);
+    mMoveProjAnchor = mapToScene(mousePos);
 }
 
-QGV::MouseActions QGVMapActions::getMouseActions() const
+void QGVMapActions::startMovingObject(const QPoint& mousePos, QGVDrawItem* object)
 {
-    return mMouseActions;
+    if (!object->isFlag(QGV::ItemFlag::Movable)) {
+        changeState(QGV::MapActionsState::Idle);
+        return;
+    }
+
+    qgvInfo() << "QGVMapActions startMovingObject " << mousePos << object->projDebug();
+
+    const QPointF projMouse = mapToScene(mousePos);
+    mMovingObject = object;
+    mMovingObject->projOnObjectStartMove(projMouse);
+    changeState(QGV::MapActionsState::MovingObjects);
 }
 
-QGVCameraState QGVMapActions::getCamera() const
+void QGVMapActions::startSelectionRect(const QPoint& mousePos, const QGV::MapSelectionMode mode)
 {
-    const bool animation = mState == QGV::MapState::Animation;
-    return QGVCameraState(mGeoMap, mAzimuth, mScale, viewRect(), animation);
+    qgvInfo() << "QGVMapActions startSelectionRect " << static_cast<int>(mode) << mousePos;
+
+    changeState(QGV::MapActionsState::SelectionRect);
+    mSelectionMode = mode;
+    mSelectionRect->setStartPoint(mousePos);
+    mSelectionRect->showRect();
 }
 
-void QGVMapActions::cameraTo(const QGVCameraActions& actions, bool animation)
+void QGVMapActions::move(const QPoint& mousePos)
 {
-    const QGVCameraState oldState = getCamera();
-    blockCameraUpdate();
-    changeState((animation) ? QGV::MapState::Animation : QGV::MapState::Idle);
-    cameraScale(actions.scale());
-    cameraMove(actions.projCenter());
-    cameraRotate(actions.azimuth());
-    unblockCameraUpdate();
-    applyCameraUpdate(oldState);
+    qgvInfo() << "QGVMapActions move for " << static_cast<int>(mState) << mousePos;
+
+    if (mState == QGV::MapActionsState::MovingMap) {
+        moveMap(mousePos);
+    } else if (mState == QGV::MapActionsState::MovingObjects) {
+        moveObject(mousePos);
+    } else if (mState == QGV::MapActionsState::SelectionRect) {
+        moveRect(mousePos);
+    }
 }
 
-double QGVMapActions::getMinScale() const
+void QGVMapActions::stop(const QPoint& mousePos)
 {
-    return mMinScale;
+    qgvInfo() << "QGVMapActions stop for " << static_cast<int>(mState);
+
+    if (mState == QGV::MapActionsState::MovingObjects) {
+        stopMoveObject(mousePos);
+    } else if (mState == QGV::MapActionsState::SelectionRect) {
+        stopRect();
+    }
+    changeState(QGV::MapActionsState::Idle);
 }
 
-double QGVMapActions::getMaxScale() const
-{
-    return mMaxScale;
-}
-
-void QGVMapActions::setScaleLimits(double minScale, double maxScale)
-{
-    mMinScale = minScale;
-    mMaxScale = maxScale;
-    cameraScale(mScale);
-}
-
-void QGVMapActions::cleanState()
-{
-    changeState(QGV::MapState::Idle);
-}
-
-QRectF QGVMapActions::viewRect() const
-{
-    return mapToScene(mViewRect).boundingRect();
-}
-
-void QGVMapActions::changeState(QGV::MapState state)
+void QGVMapActions::changeState(QGV::MapActionsState state)
 {
     if (mState == state) {
         return;
     }
-    if (mState == QGV::MapState::Animation) {
-        QGVCameraState oldCamera = getCamera();
-        mState = state;
-        applyCameraUpdate(oldCamera);
-    } else {
-        mState = state;
-    }
-    if (mState == QGV::MapState::Idle) {
-        mWheelMouseArea = QRect();
-        mWheelProjAnchor = QPointF();
-        mWheelBestFactor = getMinScale();
-        mMoveProjAnchor = QPointF();
-        mMovingObject = nullptr;
+
+    qgvInfo() << "QGVMapActions change state from " << static_cast<int>(mState) << "to" << static_cast<int>(state);
+
+    mState = state;
+
+    if (mState == QGV::MapActionsState::Idle) {
+        mMoveProjAnchor = {};
+        mMovingObject = {};
+        mSelectionMode = QGV::MapSelectionMode::Zoom;
         mSelectionRect->hideRect();
     }
-    mGeoMap->onMapState(mState);
 }
 
-void QGVMapActions::cameraScale(double scale)
+QPointF QGVMapActions::mapToScene(const QPoint& mousePos) const
 {
-    const QGVCameraState oldState = getCamera();
-    const double oldScale = mScale;
-    const double newScale = qMax(mMinScale, qMin(mMaxScale, scale));
-    if (qFuzzyCompare(oldScale, newScale)) {
-        return;
-    }
-    const double deltaScale = newScale / oldScale;
-    QGraphicsView::scale(deltaScale, deltaScale);
-    mScale = newScale;
-    applyCameraUpdate(oldState);
-    qgvDebug() << "cameraScale" << scale;
+    const auto viewPoint = mGeoMap->geoView()->mapFromParent(mousePos);
+    return mGeoMap->geoView()->mapToScene(viewPoint);
 }
 
-void QGVMapActions::cameraRotate(double azimuth)
+QPolygonF QGVMapActions::mapToScene(const QRect& mouseRect) const
 {
-    const QGVCameraState oldState = getCamera();
-    const double oldAzimuth = fmod(mAzimuth, 360);
-    const double newAzimuth = fmod(azimuth, 360);
-    if (qFuzzyCompare(oldAzimuth, newAzimuth)) {
-        return;
-    }
-    QGraphicsView::rotate(newAzimuth - oldAzimuth);
-    mAzimuth = newAzimuth;
-    applyCameraUpdate(oldState);
-    qgvDebug() << "cameraRotate" << azimuth;
+    const auto viewRect = QRect(mGeoMap->geoView()->mapFromParent(mouseRect.topLeft()),
+                                mGeoMap->geoView()->mapFromParent(mouseRect.bottomRight()));
+    return mGeoMap->geoView()->mapToScene(viewRect);
 }
 
-void QGVMapActions::cameraMove(const QPointF& projPos)
+void QGVMapActions::moveMap(const QPoint& mousePos)
 {
-    const QGVCameraState oldState = getCamera();
-    const QPointF oldCenter = viewRect().center();
-    if (oldCenter != projPos) {
-        QGraphicsView::centerOn(projPos);
-        applyCameraUpdate(oldState);
-        qgvDebug() << "cameraMove" << projPos;
-    }
+    const QPointF projCenter = mGeoMap->geoView()->viewProjRect().center();
+    const QPointF projMouse = mapToScene(mousePos);
+    const double xDelta = (mMoveProjAnchor.x() - projMouse.x());
+    const double yDelta = (mMoveProjAnchor.y() - projMouse.y());
+
+    mGeoMap->geoView()->cameraTo(QGVCameraActions(mGeoMap).moveTo(projCenter + QPointF(xDelta, yDelta)), false);
 }
 
-void QGVMapActions::blockCameraUpdate()
-{
-    mBlockUpdateCount++;
-}
-
-void QGVMapActions::unblockCameraUpdate()
-{
-    if (mBlockUpdateCount == 0) {
-        return;
-    }
-    mBlockUpdateCount--;
-}
-
-void QGVMapActions::applyCameraUpdate(const QGVCameraState& oldState)
-{
-    if (mBlockUpdateCount > 0) {
-        return;
-    }
-    QGVCameraState newState = getCamera();
-    if (oldState == newState) {
-        return;
-    }
-    mGeoMap->onMapCamera(oldState, newState);
-}
-
-void QGVMapActions::showTooltip(QHelpEvent* helpEvent)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::Tooltip)) {
-        return;
-    }
-    helpEvent->accept();
-    const QPointF projMouse = mapToScene(helpEvent->pos());
-    QGraphicsItem* item = itemAt(helpEvent->pos());
-    QGVDrawItem* geoObject = QGVMapQGItem::geoObjectFromQGItem(item);
-    QString toolTip = QString();
-    if (geoObject != nullptr) {
-        toolTip = geoObject->projTooltip(projMouse);
-    }
-    if (!toolTip.isEmpty()) {
-        QToolTip::showText(helpEvent->globalPos(), toolTip);
-    } else {
-        QToolTip::hideText();
-    }
-}
-
-void QGVMapActions::zoomByWheel(QWheelEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::ZoomWheel)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    event->accept();
-    if (mState != QGV::MapState::Wheel) {
-        changeState(QGV::MapState::Wheel);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        QPoint pos(event->position().x(), event->position().y());
-        mWheelMouseArea =
-                QRect(pos, QSize(1, 1)).adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
-        mWheelProjAnchor = mapToScene(pos);
-#else
-        mWheelMouseArea = QRect(event->pos(), QSize(1, 1))
-                                  .adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
-        mWheelProjAnchor = mapToScene(event->pos());
-#endif
-        mWheelBestFactor = mScale;
-    } else {
-        if (mWheelBestFactor < mScale) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            QPoint pos(event->position().x(), event->position().y());
-            mWheelProjAnchor = mapToScene(pos);
-#else
-            mWheelProjAnchor = mapToScene(event->pos());
-#endif
-            mWheelBestFactor = mScale;
-        }
-    }
-
-    const QGVCameraState oldState = getCamera();
-    blockCameraUpdate();
-    double newScale = mScale;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    if (event->angleDelta().y() > 0)
-#else
-    if (event->delta() > 0)
-#endif
-    {
-        newScale *= wheelExponentDown;
-    } else {
-        newScale /= wheelExponentUp;
-    }
-    cameraScale(newScale);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QPoint wheelPos(event->position().x(), event->position().y());
-    const QPointF projMouse = mapToScene(wheelPos);
-#else
-    const QPointF projMouse = mapToScene(event->pos());
-#endif
-    const double xDelta = (projMouse.x() - mWheelProjAnchor.x());
-    const double yDelta = (projMouse.y() - mWheelProjAnchor.y());
-    if (!qFuzzyIsNull(xDelta) || !qFuzzyIsNull(yDelta)) {
-        cameraMove(viewRect().center() - QPointF(xDelta, yDelta));
-    }
-    unblockCameraUpdate();
-    applyCameraUpdate(oldState);
-}
-
-void QGVMapActions::startMoving(QMouseEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::Move)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    event->accept();
-    changeState(QGV::MapState::MovingMap);
-    mMoveProjAnchor = mapToScene(event->pos());
-}
-
-void QGVMapActions::startMovingObject(QMouseEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::MoveObjects)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    const QPointF projPos = mapToScene(event->pos());
-    auto geoObjects = mGeoMap->search(projPos, Qt::ContainsItemShape);
-    if (geoObjects.isEmpty()) {
-        return;
-    }
-    auto* geoObject = geoObjects.first();
-    if (!geoObject->isFlag(QGV::ItemFlag::Movable)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    mMovingObject = geoObject;
-    mMovingObject->projOnObjectStartMove(projPos);
-    changeState(QGV::MapState::MovingObjects);
-}
-
-void QGVMapActions::startSelectionRect(QMouseEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::Selection) && !mMouseActions.testFlag(QGV::MouseAction::ZoomRect)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    event->accept();
-    changeState(QGV::MapState::SelectionRect);
-    mSelectionRect->setStartPoint(event->pos());
-    mSelectionRect->showRect();
-}
-
-void QGVMapActions::stopSelectionRect(QMouseEvent* event)
-{
-    const QRect rect = mSelectionRect->getRect();
-    changeState(QGV::MapState::Idle);
-    if (event->modifiers() == Qt::NoModifier) {
-        zoomArea(event, rect);
-    } else if (event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::ShiftModifier) {
-        selectObjectsByRect(event, rect);
-    }
-}
-
-void QGVMapActions::stopMovingObject(QMouseEvent* event)
+void QGVMapActions::moveObject(const QPoint& mousePos)
 {
     Q_ASSERT(mMovingObject);
-    const QPointF projPos = mapToScene(event->pos());
-    mMovingObject->projOnObjectStopMove(projPos);
-    changeState(QGV::MapState::Idle);
+    const QPointF projMouse = mapToScene(mousePos);
+    mMovingObject->projOnObjectMovePos(projMouse);
 }
 
-void QGVMapActions::zoomArea(QMouseEvent* event, QRect areaRect)
+void QGVMapActions::moveRect(const QPoint& mousePos)
 {
-    if (!mMouseActions.testFlag(QGV::MouseAction::ZoomRect)) {
-        changeState(QGV::MapState::Idle);
+    mSelectionRect->setEndPoint(mousePos);
+}
+
+void QGVMapActions::stopMoveObject(const QPoint& mousePos)
+{
+    Q_ASSERT(mMovingObject);
+    const QPointF projPos = mapToScene(mousePos);
+    mMovingObject->projOnObjectStopMove(projPos);
+}
+
+void QGVMapActions::stopRect()
+{
+    if (!mSelectionRect->isSelection()) {
         return;
     }
-    event->accept();
-    const QRectF newProjRect = mapToScene(areaRect).boundingRect();
-    const QGVCameraState oldState = getCamera();
+
+    const QRect rect = mSelectionRect->getRect();
+
+    if (mSelectionMode == QGV::MapSelectionMode::Zoom) {
+        applyZoomRect(rect);
+    } else if (mSelectionMode == QGV::MapSelectionMode::SelectionAddition) {
+        applySelectionRect(rect, false);
+    } else if (mSelectionMode == QGV::MapSelectionMode::SelectionReplace) {
+        applySelectionRect(rect, true);
+    }
+}
+
+void QGVMapActions::applyZoomRect(QRect rect)
+{
+    const QRectF newProjRect = mapToScene(rect).boundingRect();
+    const QGVCameraState oldState = mGeoMap->geoView()->getCamera();
     const QRectF oldProjRect = oldState.projRect();
     const double scaleFactor =
             qMin(qAbs(oldProjRect.width() / newProjRect.width()), qAbs(oldProjRect.height() / newProjRect.height()));
@@ -361,236 +179,18 @@ void QGVMapActions::zoomArea(QMouseEvent* event, QRect areaRect)
     fly->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void QGVMapActions::selectObjectsByRect(QMouseEvent* event, QRect selRect)
+void QGVMapActions::applySelectionRect(QRect rect, bool replaceSelection)
 {
-    if (!mMouseActions.testFlag(QGV::MouseAction::Selection)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    event->accept();
-    if (event->modifiers() == Qt::ShiftModifier) {
+    if (replaceSelection) {
         mGeoMap->unselectAll();
     }
-    const QRectF projSelRect = QRectF(mapToScene(selRect.topLeft()), mapToScene(selRect.bottomRight()));
-    auto selList = mGeoMap->search(projSelRect, Qt::ContainsItemShape);
+
+    const QPolygonF projSelPolygon = QPolygonF() << mapToScene(rect.topLeft()) << mapToScene(rect.topRight())
+                                                 << mapToScene(rect.bottomRight()) << mapToScene(rect.bottomLeft())
+                                                 << mapToScene(rect.topLeft());
+
+    auto selList = mGeoMap->search(projSelPolygon, Qt::ContainsItemShape);
     for (auto* geoObject : selList) {
-        geoObject->setSelected(!geoObject->isSelected());
+        geoObject->setSelected(true);
     }
-}
-
-void QGVMapActions::objectClick(QMouseEvent* event)
-{
-    if (event->button() != Qt::LeftButton) {
-        return;
-    }
-    const QPointF projPos = mapToScene(event->pos());
-    auto geoObjects = mGeoMap->search(projPos, Qt::ContainsItemShape);
-    if (geoObjects.isEmpty()) {
-        return;
-    }
-    auto* geoObject = geoObjects.first();
-    if (mMouseActions.testFlag(QGV::MouseAction::Selection) && geoObject->isSelectable()) {
-        if (event->button() == Qt::LeftButton) {
-            const bool wasSelect = geoObject->isSelected();
-            if (event->modifiers() == Qt::NoModifier) {
-                geoObject->getMap()->unselectAll();
-                geoObject->setSelected(!wasSelect);
-            }
-            if (event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::ShiftModifier) {
-                geoObject->setSelected(!wasSelect);
-            }
-        }
-    }
-    if (geoObject->isFlag(QGV::ItemFlag::Clickable)) {
-        if (event->button() == Qt::LeftButton) {
-            geoObject->projOnMouseClick(projPos);
-        }
-    }
-}
-
-void QGVMapActions::objectDoubleClick(QMouseEvent* event)
-{
-    if (event->button() != Qt::LeftButton) {
-        return;
-    }
-    const QPointF projPos = mapToScene(event->pos());
-    auto geoObjects = mGeoMap->search(projPos, Qt::ContainsItemShape);
-    if (geoObjects.isEmpty()) {
-        return;
-    }
-    auto* geoObject = geoObjects.first();
-    if (geoObject->isFlag(QGV::ItemFlag::Clickable)) {
-        if (event->button() == Qt::LeftButton) {
-            geoObject->projOnMouseDoubleClick(projPos);
-        }
-    }
-}
-
-void QGVMapActions::moveForWheel(QMouseEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::ZoomWheel)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    event->accept();
-    if (!mWheelMouseArea.contains(event->pos())) {
-        changeState(QGV::MapState::Idle);
-    }
-}
-
-void QGVMapActions::moveForRect(QMouseEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::Selection) && !mMouseActions.testFlag(QGV::MouseAction::ZoomRect)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    event->accept();
-    const QPoint endPoint = event->pos();
-    mSelectionRect->setEndPoint(endPoint);
-}
-
-void QGVMapActions::moveMap(QMouseEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::Move)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    event->accept();
-    const QPointF projCenter = viewRect().center();
-    const QPointF projMouse = mapToScene(event->pos());
-    const double xDelta = (mMoveProjAnchor.x() - projMouse.x());
-    const double yDelta = (mMoveProjAnchor.y() - projMouse.y());
-    cameraMove(projCenter + QPointF(xDelta, yDelta));
-}
-
-void QGVMapActions::moveObject(QMouseEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::MoveObjects)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    Q_ASSERT(mMovingObject);
-    event->accept();
-    const QPointF projMouse = mapToScene(event->pos());
-    mMovingObject->projOnObjectMovePos(projMouse);
-}
-
-void QGVMapActions::unselectAll(QMouseEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::Selection)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    event->accept();
-    mGeoMap->unselectAll();
-    changeState(QGV::MapState::Idle);
-}
-
-void QGVMapActions::showMenu(QMouseEvent* event)
-{
-    if (!mMouseActions.testFlag(QGV::MouseAction::ContextMenu)) {
-        changeState(QGV::MapState::Idle);
-        return;
-    }
-    event->accept();
-    changeState(QGV::MapState::Idle);
-    if (mGeoMap->actions().isEmpty()) {
-        return;
-    }
-    mContextMenu->clear();
-    mContextMenu->insertActions(0, mGeoMap->actions());
-    mContextMenu->exec(mapToGlobal(event->pos()));
-}
-
-bool QGVMapActions::event(QEvent* event)
-{
-    event->ignore();
-    if (event->type() == QEvent::ToolTip) {
-        showTooltip(static_cast<QHelpEvent*>(event));
-    }
-    return QGraphicsView::event(event);
-}
-
-void QGVMapActions::wheelEvent(QWheelEvent* event)
-{
-    event->ignore();
-    zoomByWheel(event);
-    QWidget::wheelEvent(event);
-}
-
-void QGVMapActions::mousePressEvent(QMouseEvent* event)
-{
-    event->ignore();
-    objectClick(event);
-    if (event->button() == Qt::LeftButton) {
-        if (event->modifiers() == Qt::AltModifier) {
-            startMovingObject(event);
-        } else if (event->modifiers() == Qt::NoModifier) {
-            startMoving(event);
-        }
-    } else if (event->button() == Qt::RightButton) {
-        startSelectionRect(event);
-    }
-    QGraphicsView::mousePressEvent(event);
-}
-
-void QGVMapActions::mouseReleaseEvent(QMouseEvent* event)
-{
-    event->ignore();
-    if (mState == QGV::MapState::MovingObjects) {
-        stopMovingObject(event);
-    } else if (mState == QGV::MapState::SelectionRect) {
-        if (mSelectionRect->isSelection()) {
-            stopSelectionRect(event);
-        } else {
-            showMenu(event);
-        }
-    } else {
-        changeState(QGV::MapState::Idle);
-    }
-    QGraphicsView::mouseReleaseEvent(event);
-}
-
-void QGVMapActions::mouseMoveEvent(QMouseEvent* event)
-{
-    event->ignore();
-    if (mState == QGV::MapState::Wheel) {
-        moveForWheel(event);
-    } else if (mState == QGV::MapState::MovingMap) {
-        moveMap(event);
-    } else if (mState == QGV::MapState::MovingObjects) {
-        moveObject(event);
-    } else if (mState == QGV::MapState::SelectionRect) {
-        moveForRect(event);
-    }
-    QGraphicsView::mouseMoveEvent(event);
-}
-
-void QGVMapActions::mouseDoubleClickEvent(QMouseEvent* event)
-{
-    event->ignore();
-    unselectAll(event);
-    objectDoubleClick(event);
-    QGraphicsView::mouseDoubleClickEvent(event);
-}
-
-void QGVMapActions::resizeEvent(QResizeEvent* event)
-{
-    const QGVCameraState oldState = getCamera();
-    QGraphicsView::resizeEvent(event);
-    mViewRect = viewport()->rect();
-    mGeoMap->anchoreWidgets();
-    applyCameraUpdate(oldState);
-}
-
-void QGVMapActions::showEvent(QShowEvent* event)
-{
-    const QGVCameraState oldState = getCamera();
-    QGraphicsView::showEvent(event);
-    applyCameraUpdate(oldState);
-}
-
-void QGVMapActions::keyPressEvent(QKeyEvent* event)
-{
-    QWidget::keyPressEvent(event);
 }
