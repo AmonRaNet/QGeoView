@@ -103,7 +103,8 @@ void Rectangle::projOnObjectMovePos(const QPointF& projPos)
 {
     mProjRect.moveCenter(projPos);
     mGeoRect = getMap()->getProjection()->projToGeo(mProjRect);
-    refresh();
+    resetBoundary();
+    repaint();
     qInfo() << "object moved" << mGeoRect;
 }
 

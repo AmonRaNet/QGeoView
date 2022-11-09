@@ -33,7 +33,6 @@ void QGVDrawItem::setFlags(QGV::ItemFlags flags)
         mFlags = flags;
         projOnFlags();
         refresh();
-        repaint();
     }
 }
 
@@ -94,6 +93,7 @@ void QGVDrawItem::refresh()
     mQGDrawItem->setOpacity(effectiveOpacity());
     mQGDrawItem->setZValue(effectiveZValue());
     mQGDrawItem->setAcceptHoverEvents(isFlag(QGV::ItemFlag::Highlightable));
+
     if (QGV::isDrawDebug()) {
         setProperty("updateCount", property("updateCount").toInt() + 1);
     }
@@ -101,9 +101,16 @@ void QGVDrawItem::refresh()
 
 void QGVDrawItem::repaint()
 {
-    if (!mQGDrawItem.isNull()) {
-        mQGDrawItem->update();
+    if (mQGDrawItem.isNull()) {
+        return;
     }
+
+    if (isFlag(QGV::ItemFlag::Transformed) || isFlag(QGV::ItemFlag::Highlighted) ||
+        isFlag(QGV::ItemFlag::IgnoreScale) || isFlag(QGV::ItemFlag::IgnoreAzimuth)) {
+        refresh();
+    }
+
+    mQGDrawItem->update();
 }
 
 void QGVDrawItem::resetBoundary()
@@ -197,14 +204,12 @@ void QGVDrawItem::onCamera(const QGVCameraState& oldState, const QGVCameraState&
         return;
     }
     refresh();
-    repaint();
 }
 
 void QGVDrawItem::onUpdate()
 {
     QGVItem::onUpdate();
     refresh();
-    repaint();
 }
 
 void QGVDrawItem::onClean()
