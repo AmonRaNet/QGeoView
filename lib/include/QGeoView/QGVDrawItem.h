@@ -63,4 +63,5 @@ protected:
 private:
     QGV::ItemFlags mFlags;
     QScopedPointer<QGVMapQGItem> mQGDrawItem;
+    bool mDirty;
 };

@@ -25,6 +25,7 @@ double highlightScale = 1.15;
 }
 
 QGVDrawItem::QGVDrawItem()
+    : mDirty{ false }
 {}
 
 void QGVDrawItem::setFlags(QGV::ItemFlags flags)
@@ -93,6 +94,9 @@ void QGVDrawItem::refresh()
     mQGDrawItem->setOpacity(effectiveOpacity());
     mQGDrawItem->setZValue(effectiveZValue());
     mQGDrawItem->setAcceptHoverEvents(isFlag(QGV::ItemFlag::Highlightable));
+    mQGDrawItem->update();
+
+    mDirty = false;
 
     if (QGV::isDrawDebug()) {
         setProperty("updateCount", property("updateCount").toInt() + 1);
@@ -105,18 +109,22 @@ void QGVDrawItem::repaint()
         return;
     }
 
-    if (isFlag(QGV::ItemFlag::Transformed) || isFlag(QGV::ItemFlag::Highlighted) ||
-        isFlag(QGV::ItemFlag::IgnoreScale) || isFlag(QGV::ItemFlag::IgnoreAzimuth)) {
+    if (mDirty) {
         refresh();
+    } else {
+        mQGDrawItem->update();
     }
-
-    mQGDrawItem->update();
 }
 
 void QGVDrawItem::resetBoundary()
 {
     if (!mQGDrawItem.isNull()) {
         mQGDrawItem->resetGeometry();
+    }
+
+    if (isFlag(QGV::ItemFlag::Transformed) || isFlag(QGV::ItemFlag::Highlighted) ||
+        isFlag(QGV::ItemFlag::IgnoreScale) || isFlag(QGV::ItemFlag::IgnoreAzimuth)) {
+        mDirty = true;
     }
 }
 
