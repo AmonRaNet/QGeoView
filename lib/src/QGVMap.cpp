@@ -52,6 +52,7 @@ QGVMap::QGVMap(QWidget* parent)
     mRootItem.reset(new RootItem(this));
     setLayout(new QVBoxLayout(this));
     layout()->addWidget(mQGView.data());
+    layout()->setContentsMargins(0, 0, 0, 0);
     refreshProjection();
 }
 
