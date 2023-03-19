@@ -46,6 +46,16 @@ enum class TilesType
     Hybrid,
 };
 
+enum BDGExLayer
+{
+    ctm25,
+    ctm50,
+    ctm100,
+    ctm250,
+    ctmmultiescalas,
+    ctmmultiescalas_mercator
+};
+
 enum class MapState
 {
     Idle,
