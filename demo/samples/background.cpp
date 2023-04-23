@@ -22,6 +22,7 @@
 #include <QGeoView/QGVLayerBing.h>
 #include <QGeoView/QGVLayerGoogle.h>
 #include <QGeoView/QGVLayerOSM.h>
+#include <QGeoView/QGVLayerBDGEx.h>
 
 BackgroundDemo::BackgroundDemo(QGVMap* geoMap, QObject* parent)
     : DemoItem(geoMap, SelectorDialog::Single, parent)
@@ -38,7 +39,8 @@ QString BackgroundDemo::comment() const
            "- OpenStreetMaps<br>"
            "- Google Maps<br>"
            "- Bing Maps<br>"
-           "- Custom maps(OSM-like, for e.g MapServer)";
+           "- Custom maps(OSM-like, for e.g MapServer)<br>"
+           "- Banco de Dados Geográfico do Exército";
 }
 
 void BackgroundDemo::onInit()
@@ -62,6 +64,12 @@ void BackgroundDemo::onInit()
         { "BING_HYBRID", new QGVLayerBing(QGV::TilesType::Hybrid) },
         { "BING_SCHEMA", new QGVLayerBing(QGV::TilesType::Schema) },
         { "CUSTOM_OSM", new QGVLayerOSM(customURI) },
+        { "BDGEx CTM25", new QGVLayerBDGEx(QGV::BDGExLayer::ctm25) },
+        { "BDGEx CTM50", new QGVLayerBDGEx(QGV::BDGExLayer::ctm50) },
+        { "BDGEx CTM100", new QGVLayerBDGEx(QGV::BDGExLayer::ctm100) },
+        { "BDGEx CTM250", new QGVLayerBDGEx(QGV::BDGExLayer::ctm250) },
+        { "BDGEx CTM Multi Scale", new QGVLayerBDGEx(QGV::BDGExLayer::ctmmultiescalas) },
+        { "BDGEx CTM Multi Scale Mercator", new QGVLayerBDGEx(QGV::BDGExLayer::ctmmultiescalas_mercator) },
     };
     /*
      * Layers will be owned by map.
