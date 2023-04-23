@@ -370,3 +370,12 @@ void QGVMap::mouseMoveEvent(QMouseEvent* event)
     event->ignore();
     QWidget::mouseMoveEvent(event);
 }
+
+void QGVMap::mousePressEvent(QMouseEvent* event)
+{
+    if (hasMouseTracking()) {
+        Q_EMIT mapMousePress(mapToProj(event->pos()));
+    }
+    event->ignore();
+    QWidget::mousePressEvent(event);
+}
