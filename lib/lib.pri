@@ -13,7 +13,7 @@ SOURCES += \
     $$PWD/src/QGVLayerBing.cpp \
     $$PWD/src/QGVLayerGoogle.cpp \
     $$PWD/src/QGVLayerOSM.cpp \
-	$$PWD/src/QGVLayerBDGEx.cpp \
+    $$PWD/src/QGVLayerBDGEx.cpp \
     $$PWD/src/QGVLayerTiles.cpp \
     $$PWD/src/QGVLayerTilesOnline.cpp \
     $$PWD/src/QGVMap.cpp \
@@ -39,7 +39,7 @@ HEADERS += \
     $$PWD/include/QGeoView/QGVLayerBing.h \
     $$PWD/include/QGeoView/QGVLayerGoogle.h \
     $$PWD/include/QGeoView/QGVLayerOSM.h \
-	$$PWD/include/QGeoView/QGVLayerBDGEx.h \
+    $$PWD/include/QGeoView/QGVLayerBDGEx.h \
     $$PWD/include/QGeoView/QGVLayerTiles.h \
     $$PWD/include/QGeoView/QGVLayerTilesOnline.h \
     $$PWD/include/QGeoView/QGVMap.h \

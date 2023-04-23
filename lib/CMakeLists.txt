@@ -35,7 +35,7 @@ add_library(qgeoview SHARED
     include/QGeoView/QGVLayerGoogle.h
     include/QGeoView/QGVLayerBing.h
     include/QGeoView/QGVLayerOSM.h
-	include/QGeoView/QGVLayerBDGEx.h
+    include/QGeoView/QGVLayerBDGEx.h
     include/QGeoView/QGVWidget.h
     include/QGeoView/QGVWidgetCompass.h
     include/QGeoView/QGVWidgetScale.h
@@ -59,7 +59,7 @@ add_library(qgeoview SHARED
     src/QGVLayerGoogle.cpp
     src/QGVLayerBing.cpp
     src/QGVLayerOSM.cpp
-	src/QGVLayerBDGEx.cpp
+    src/QGVLayerBDGEx.cpp
     src/QGVWidget.cpp
     src/QGVWidgetCompass.cpp
     src/QGVWidgetScale.cpp

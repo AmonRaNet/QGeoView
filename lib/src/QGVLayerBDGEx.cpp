@@ -71,23 +71,17 @@ int QGVLayerBDGEx::maxZoomlevel() const
 QString QGVLayerBDGEx::tilePosToUrl(const QGV::GeoTilePos& tilePos) const
 {
     QString url = mUrl;
-    //    url.replace("${z}", QString::number(tilePos.zoom()));
-    //    url.replace("${x}", QString::number(tilePos.pos().x()));
-    //    url.replace("${y}", QString::number(tilePos.pos().y()));
     QGV::GeoRect rect = tilePos.toGeoRect();
-    url.replace("lonLeft", QString::number(rect.lonLeft(),'f',6));
-    url.replace("latBottom", QString::number(rect.latBottom(),'f',6));
-    url.replace("lonRigth", QString::number(rect.lonRigth(),'f',6));
-    url.replace("latTop", QString::number(rect.latTop(),'f',6));
+    url.replace("lonLeft", QString::number(rect.lonLeft(), 'f', 6));
+    url.replace("latBottom", QString::number(rect.latBottom(), 'f', 6));
+    url.replace("lonRigth", QString::number(rect.lonRigth(), 'f', 6));
+    url.replace("latTop", QString::number(rect.latTop(), 'f', 6));
     double m_width = rect.lonRigth() - rect.lonLeft();
     double m_height = rect.latTop() - rect.latBottom();
-    double ratio = m_width/m_height;
+    double ratio = m_width / m_height;
     int width_pixels = 900;
     int height_pixels = (int)((double)width_pixels / ratio);
     url.replace("WIDTH", QString::number(width_pixels));
     url.replace("HEIGHT", QString::number(height_pixels));
-    //qDebug() << rect.lonLeft() << rect.latBottom() << rect.lonRigth() << rect.latTop() << width_pixels << height_pixels;
-    //qDebug() << bdgexURL;
-    return url;
     return url;
 }

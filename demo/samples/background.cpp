@@ -19,10 +19,10 @@
 #include "background.h"
 
 #include <QGeoView/QGVGlobal.h>
+#include <QGeoView/QGVLayerBDGEx.h>
 #include <QGeoView/QGVLayerBing.h>
 #include <QGeoView/QGVLayerGoogle.h>
 #include <QGeoView/QGVLayerOSM.h>
-#include <QGeoView/QGVLayerBDGEx.h>
 
 BackgroundDemo::BackgroundDemo(QGVMap* geoMap, QObject* parent)
     : DemoItem(geoMap, SelectorDialog::Single, parent)
