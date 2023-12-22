@@ -121,13 +121,6 @@ QGVCameraActions::QGVCameraActions(QGVMap* geoMap)
     reset();
 }
 
-QGVCameraActions::QGVCameraActions(const QGVCameraActions& other)
-    : mOrigin(other.mOrigin)
-    , mScale(other.mScale)
-    , mAzimuth(other.mAzimuth)
-    , mProjCenter(other.mProjCenter)
-{}
-
 const QGVCameraState& QGVCameraActions::origin() const
 {
     return mOrigin;
