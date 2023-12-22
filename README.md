@@ -55,16 +55,17 @@ cd <source-dir>
 doxygen
 ```
 
-### Documentation and demo
+### Documentation and samples
 
 Documentation: https://amonranet.github.io/QGeoView/
 
-You can see here small video: [QGeoView Demo](https://youtu.be/t0D21r_s-8E)
-or use demo example to see all QGeoView features:
+Please use [HOWTO](HOWTO.md) samples to see all QGeoView features:
 
 ```
-<build-dir>/qgeoview-demo
+./samples
 ```
+
+You can see here small video: [QGeoView Demo](https://youtu.be/t0D21r_s-8E).
 
 ## Community
 
