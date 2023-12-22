@@ -347,7 +347,9 @@ void QGVCameraFlyAnimation::onStart()
     const double projSpeed1 = scaledDistance1 / (duration() / 1000);
     const double projSpeed2 = scaledDistance2 / (duration() / 1000);
     const double expectedSpeed = 300;
-    if (projSpeed1 < expectedSpeed && projSpeed2 < expectedSpeed) {
+    if (scaledDistance0 == 0) {
+        setDuration(1000);
+    } else if (projSpeed1 < expectedSpeed && projSpeed2 < expectedSpeed) {
         setDuration(static_cast<int>(1000.0 * qMax(scaledDistance1, scaledDistance2) / expectedSpeed));
     }
     mFlyScale = qMin(actions().scale(), expectedSpeed / projSpeed0);
