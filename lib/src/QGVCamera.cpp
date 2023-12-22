@@ -37,7 +37,8 @@ QGVCameraState::QGVCameraState(const QGVCameraState& other)
     , mAzimuth(other.mAzimuth)
     , mProjRect(other.mProjRect)
     , mAnimation(other.mAnimation)
-{}
+{
+}
 
 QGVCameraState::QGVCameraState(const QGVCameraState&& other)
     : mGeoMap(std::move(other.mGeoMap))
@@ -45,7 +46,8 @@ QGVCameraState::QGVCameraState(const QGVCameraState&& other)
     , mAzimuth(std::move(other.mAzimuth))
     , mProjRect(std::move(other.mProjRect))
     , mAnimation(std::move(other.mAnimation))
-{}
+{
+}
 
 QGVCameraState& QGVCameraState::operator=(const QGVCameraState& other)
 {
@@ -118,13 +120,6 @@ QGVCameraActions::QGVCameraActions(QGVMap* geoMap)
 {
     reset();
 }
-
-QGVCameraActions::QGVCameraActions(const QGVCameraActions& other)
-    : mOrigin(other.mOrigin)
-    , mScale(other.mScale)
-    , mAzimuth(other.mAzimuth)
-    , mProjCenter(other.mProjCenter)
-{}
 
 const QGVCameraState& QGVCameraActions::origin() const
 {
@@ -221,7 +216,8 @@ QGVCameraAnimation::QGVCameraAnimation(const QGVCameraActions& actions, QObject*
     : QAbstractAnimation(parent)
     , mDuration(1000)
     , mActions(actions)
-{}
+{
+}
 
 void QGVCameraAnimation::setDuration(int msecs)
 {
@@ -239,10 +235,12 @@ QGVCameraActions& QGVCameraAnimation::actions()
 }
 
 void QGVCameraAnimation::onStart()
-{}
+{
+}
 
 void QGVCameraAnimation::onStop()
-{}
+{
+}
 
 double QGVCameraAnimation::interpolateScale(double from, double to, double progress)
 {
@@ -310,7 +308,8 @@ void QGVCameraAnimation::onStateChanged(QGV::MapState state)
 QGVCameraSimpleAnimation::QGVCameraSimpleAnimation(const QGVCameraActions& actions, QObject* parent)
     : QGVCameraAnimation(actions, parent)
     , mEasing(QEasingCurve::Linear)
-{}
+{
+}
 
 void QGVCameraSimpleAnimation::setEasingCurve(const QEasingCurve& easing)
 {
@@ -341,7 +340,9 @@ void QGVCameraFlyAnimation::onStart()
     const double projSpeed1 = scaledDistance1 / (duration() / 1000);
     const double projSpeed2 = scaledDistance2 / (duration() / 1000);
     const double expectedSpeed = 300;
-    if (projSpeed1 < expectedSpeed && projSpeed2 < expectedSpeed) {
+    if (scaledDistance0 == 0) {
+        setDuration(1000);
+    } else if (projSpeed1 < expectedSpeed && projSpeed2 < expectedSpeed) {
         setDuration(static_cast<int>(1000.0 * qMax(scaledDistance1, scaledDistance2) / expectedSpeed));
     }
     mFlyScale = qMin(actions().scale(), expectedSpeed / projSpeed0);
@@ -357,7 +358,6 @@ void QGVCameraFlyAnimation::onProgress(double progress, QGVCameraActions& target
         target.scaleTo(interpolateScale(actions().origin().scale(), mFlyScale, flyInter));
         const double moveInter = moveCurve.valueForProgress(flyInter);
         target.moveTo(interpolatePos(actions().origin().projCenter(), mFlyAnchor, moveInter));
-
     } else {
         const double flyInter = (progress - switchThr) / (1.0 - switchThr);
         target.scaleTo(interpolateScale(mFlyScale, actions().scale(), flyInter));

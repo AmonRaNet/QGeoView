@@ -2,32 +2,6 @@ QT += gui widgets network
 
 DEFINES += QGV_EXPORT
 
-SOURCES += \
-    $$PWD/src/QGVCamera.cpp \
-    $$PWD/src/QGVDrawItem.cpp \
-    $$PWD/src/QGVGlobal.cpp \
-    $$PWD/src/QGVUtils.cpp \
-    $$PWD/src/QGVImage.cpp \
-    $$PWD/src/QGVItem.cpp \
-    $$PWD/src/QGVLayer.cpp \
-    $$PWD/src/QGVLayerBing.cpp \
-    $$PWD/src/QGVLayerGoogle.cpp \
-    $$PWD/src/QGVLayerOSM.cpp \
-    $$PWD/src/QGVLayerBDGEx.cpp \
-    $$PWD/src/QGVLayerTiles.cpp \
-    $$PWD/src/QGVLayerTilesOnline.cpp \
-    $$PWD/src/QGVMap.cpp \
-    $$PWD/src/QGVMapQGItem.cpp \
-    $$PWD/src/QGVMapQGView.cpp \
-    $$PWD/src/QGVMapRubberBand.cpp \
-    $$PWD/src/QGVProjection.cpp \
-    $$PWD/src/QGVProjectionEPSG3857.cpp \
-    $$PWD/src/QGVWidget.cpp \
-    $$PWD/src/QGVWidgetCompass.cpp \
-    $$PWD/src/QGVWidgetScale.cpp \
-    $$PWD/src/QGVWidgetText.cpp \
-    $$PWD/src/QGVWidgetZoom.cpp
-
 HEADERS += \
     $$PWD/include/QGeoView/QGVCamera.h \
     $$PWD/include/QGeoView/QGVDrawItem.h \

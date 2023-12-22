@@ -22,7 +22,8 @@ QGVProjection::QGVProjection(const QString& id, const QString& name, const QStri
     : mID(id)
     , mName(name)
     , mDescription(description)
-{}
+{
+}
 
 QString QGVProjection::getID() const
 {

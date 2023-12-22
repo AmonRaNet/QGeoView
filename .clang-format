@@ -10,4 +10,5 @@ BinPackParameters : false
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 8
 IndentWidth: 4
+AllowShortBlocksOnASingleLine: true
 ...

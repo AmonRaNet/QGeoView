@@ -59,7 +59,6 @@ class QGV_LIB_DECL QGVCameraActions
 {
 public:
     explicit QGVCameraActions(QGVMap* geoMap);
-    explicit QGVCameraActions(const QGVCameraActions& other);
 
     const QGVCameraState& origin() const;
 
