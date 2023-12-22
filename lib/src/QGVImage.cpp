@@ -25,7 +25,8 @@
 
 QGVImage::QGVImage()
     : mGeometryType(GeometryType::ByRect)
-{}
+{
+}
 
 void QGVImage::setGeometry(const QGV::GeoRect& geoRect)
 {

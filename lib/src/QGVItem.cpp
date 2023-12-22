@@ -282,7 +282,8 @@ void QGVItem::onCamera(const QGVCameraState& oldState, const QGVCameraState& new
 }
 
 void QGVItem::onUpdate()
-{}
+{
+}
 
 void QGVItem::onClean()
 {

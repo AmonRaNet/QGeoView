@@ -128,10 +128,12 @@ void QGVWidget::anchoreWidget()
 }
 
 void QGVWidget::onProjection(QGVMap* /*geoMap*/)
-{}
+{
+}
 
 void QGVWidget::onCamera(const QGVCameraState& /*oldState*/, const QGVCameraState& /*newState*/)
-{}
+{
+}
 
 void QGVWidget::resizeEvent(QResizeEvent* /*event*/)
 {

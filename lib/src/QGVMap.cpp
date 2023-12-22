@@ -31,7 +31,8 @@ class RootItem : public QGVItem
 public:
     explicit RootItem(QGVMap* geoMap)
         : mGeoMap(geoMap)
-    {}
+    {
+    }
     virtual ~RootItem();
 
     QGVMap* getMap() const override final

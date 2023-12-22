@@ -26,7 +26,8 @@ double highlightScale = 1.15;
 
 QGVDrawItem::QGVDrawItem()
     : mDirty{ false }
-{}
+{
+}
 
 void QGVDrawItem::setFlags(QGV::ItemFlags flags)
 {
@@ -161,7 +162,8 @@ QString QGVDrawItem::projDebug()
 }
 
 void QGVDrawItem::projOnFlags()
-{}
+{
+}
 
 void QGVDrawItem::projOnMouseClick(const QPointF& projPos)
 {
@@ -180,13 +182,16 @@ void QGVDrawItem::projOnMouseDoubleClick(const QPointF& projPos)
 }
 
 void QGVDrawItem::projOnObjectStartMove(const QPointF& /*projPos*/)
-{}
+{
+}
 
 void QGVDrawItem::projOnObjectStopMove(const QPointF& /*projPos*/)
-{}
+{
+}
 
 void QGVDrawItem::projOnObjectMovePos(const QPointF& /*projPos*/)
-{}
+{
+}
 
 void QGVDrawItem::onProjection(QGVMap* geoMap)
 {
