@@ -238,27 +238,24 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
         return;
     }
     event->accept();
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    const QPoint eventPos(event->position().x(), event->position().y());
+    const auto eventDelta = event->angleDelta().y();
+#else
+    const QPoint eventPos(event->pos().x(), event->pos().y());
+    const auto eventDelta = event->delta();
+#endif
+
     if (mState != QGV::MapState::Wheel) {
         changeState(QGV::MapState::Wheel);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        QPoint pos(event->position().x(), event->position().y());
-        mWheelMouseArea =
-                QRect(pos, QSize(1, 1)).adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
-        mWheelProjAnchor = mapToScene(pos);
-#else
-        mWheelMouseArea = QRect(event->pos(), QSize(1, 1))
+        mWheelMouseArea = QRect(eventPos, QSize(1, 1))
                                   .adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
-        mWheelProjAnchor = mapToScene(event->pos());
-#endif
+        mWheelProjAnchor = mapToScene(eventPos);
         mWheelBestFactor = mScale;
     } else {
         if (mWheelBestFactor < mScale) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            QPoint pos(event->position().x(), event->position().y());
-            mWheelProjAnchor = mapToScene(pos);
-#else
-            mWheelProjAnchor = mapToScene(event->pos());
-#endif
+            mWheelProjAnchor = mapToScene(eventPos);
             mWheelBestFactor = mScale;
         }
     }
@@ -266,23 +263,15 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
     const QGVCameraState oldState = getCamera();
     blockCameraUpdate();
     double newScale = mScale;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    if (event->angleDelta().y() > 0)
-#else
-    if (event->delta() > 0)
-#endif
-    {
+
+    if (eventDelta > 0) {
         newScale *= wheelExponentDown;
     } else {
         newScale /= wheelExponentUp;
     }
     cameraScale(newScale);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QPoint wheelPos(event->position().x(), event->position().y());
-    const QPointF projMouse = mapToScene(wheelPos);
-#else
-    const QPointF projMouse = mapToScene(event->pos());
-#endif
+
+    const QPointF projMouse = mapToScene(eventPos);
     const double xDelta = (projMouse.x() - mWheelProjAnchor.x());
     const double yDelta = (projMouse.y() - mWheelProjAnchor.y());
     if (!qFuzzyIsNull(xDelta) || !qFuzzyIsNull(yDelta)) {

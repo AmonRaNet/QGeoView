@@ -99,9 +99,14 @@ QGroupBox* MainWindow::createOptionsList()
         if (name == "CUSTOM_OSM") {
             auto* widget = new QWidget();
             widget->setLayout(new QHBoxLayout);
-            widget->layout()->setMargin(0);
-            widget->layout()->addWidget(radioButton);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+            widget->layout()->setMargin(0);
+#else
+            widget->layout()->setContentsMargins(QMargins{ 0, 0, 0, 0 });
+#endif
+
+            widget->layout()->addWidget(radioButton);
             auto* urlEditor = new QLineEdit();
             urlEditor->setText(customURI);
             connect(urlEditor, &QLineEdit::textChanged, this, [layer](const QString& text) {

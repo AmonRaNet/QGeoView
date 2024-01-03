@@ -155,11 +155,12 @@ void QGVLayerTiles::processCamera()
     if (newZoom != originZoom) {
         return;
     }
+
     const bool zoomChanged = (mCurZoom != newZoom);
     mCurZoom = newZoom;
 
-    const int margin =
-            (zoomChanged) ? mPerfomanceProfile.TilesMarginWithZoomChange : mPerfomanceProfile.TilesMarginNoZoomChange;
+    const int margin = (zoomChanged) ? static_cast<int>(mPerfomanceProfile.TilesMarginWithZoomChange)
+                                     : static_cast<int>(mPerfomanceProfile.TilesMarginNoZoomChange);
     const int sizePerZoom = static_cast<int>(qPow(2, mCurZoom));
     const QRect maxRect = QRect(QPoint(0, 0), QPoint(sizePerZoom, sizePerZoom));
     const QPoint topLeft = QGV::GeoTilePos::geoToTilePos(mCurZoom, areaGeoRect.topLeft()).pos();

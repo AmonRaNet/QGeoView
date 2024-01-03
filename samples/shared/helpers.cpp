@@ -17,23 +17,18 @@
  ****************************************************************************/
 
 #include "helpers.h"
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <random>
-#endif
 
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkDiskCache>
+#include <QRandomGenerator>
 
-static auto initRand = []() {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    std::srand(std::time(nullptr));
-#else
-    QDateTime cd = QDateTime::currentDateTime();
-    qsrand(cd.toTime_t());
-#endif
-    return true;
-}();
+namespace {
+int randomInt()
+{
+    return static_cast<int>(QRandomGenerator::global()->generate());
+}
+}
 
 QGV::GeoRect Helpers::randRect(QGVMap* geoMap, const QGV::GeoRect& targetArea, const QSizeF& size)
 {
@@ -53,23 +48,16 @@ QGV::GeoPos Helpers::randPos(const QGV::GeoRect& targetArea)
     const double latRange = targetArea.latTop() - targetArea.latBottom();
     const double lonRange = targetArea.lonRigth() - targetArea.lonLeft();
     static const int range = 1000;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return { targetArea.latBottom() + latRange * (std::rand() % range) / range,
-             targetArea.lonLeft() + lonRange * (std::rand() % range) / range };
-#else
-    return { targetArea.latBottom() + latRange * (qrand() % range) / range,
-             targetArea.lonLeft() + lonRange * (qrand() % range) / range };
-#endif
+
+    return { targetArea.latBottom() + latRange * (randomInt() % range) / range,
+             targetArea.lonLeft() + lonRange * (randomInt() % range) / range };
 }
 
 QSizeF Helpers::randSize(int baseSize)
 {
     const int range = -baseSize / 2;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return QSize(baseSize + (std::rand() % range), baseSize + (std::rand() % range));
-#else
-    return QSize(baseSize + (qrand() % range), baseSize + (qrand() % range));
-#endif
+
+    return QSize(baseSize + (randomInt() % range), baseSize + (randomInt() % range));
 }
 
 void Helpers::setupCachedNetworkAccessManager(QObject* parent)
