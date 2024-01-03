@@ -10,6 +10,7 @@ SUBDIRS = \
     samples/fun \
     samples/10000 \
     samples/debug \
+    samples/performance \
     samples/custom-tiles \
     samples/moving-objects \
     samples/mouse-actions \
@@ -24,6 +25,7 @@ samples.layers.depends = lib samples.shared
 samples.fun.depends = lib samples.shared
 samples.10000.depends = lib samples.shared
 samples.debug.depends = lib samples.shared
+samples.performance.depends = lib samples.shared
 samples.custom-tiles.depends = lib samples.shared
 samples.moving-objects.depends = lib samples.shared
 samples.mouse-actions.depends = lib samples.shared

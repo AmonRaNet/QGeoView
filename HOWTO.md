@@ -28,6 +28,14 @@ Special flags for draw items in [flags](samples/flags):
 
 Map with several object-layers in [layers](samples/layers)
 
+### Performance
+
+Background map has biggest impact to performance because it covers whole map area all the time.
+QGVLayerTiles always calculates needed set of tiles for current camera state and performance parameters
+will adjust algorithm.
+
+Example for performance tuning can be found in [performance](samples/performance)
+
 ### Debug and logging
 
 How to catch debug info in qDebug or visually on map [debug](samples/debug)

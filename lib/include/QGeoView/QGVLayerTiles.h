@@ -29,6 +29,13 @@ class QGV_LIB_DECL QGVLayerTiles : public QGVLayer
 public:
     QGVLayerTiles();
 
+    void setTilesMarginWithZoomChange(size_t value);
+    void setTilesMarginNoZoomChange(size_t value);
+    void setAnimationUpdateDelayMs(size_t value);
+    void setVisibleZoomLayersBelowCurrent(size_t value);
+    void setVisibleZoomLayersAboveCurrent(size_t value);
+    void setCameraUpdatesDuringAnimation(bool value);
+
 protected:
     void onProjection(QGVMap* geoMap) override;
     void onCamera(const QGVCameraState& oldState, const QGVCameraState& newState) override;
@@ -46,6 +53,7 @@ private:
     void processCamera();
     void removeAllAbove(const QGV::GeoTilePos& tilePos);
     void removeWhenCovered(const QGV::GeoTilePos& tilePos);
+    void removeForPerfomance(const QGV::GeoTilePos& tilePos);
     void addTile(const QGV::GeoTilePos& tilePos, QGVDrawItem* tileObj);
     void removeTile(const QGV::GeoTilePos& tilePos);
     bool isTileExists(const QGV::GeoTilePos& tilePos) const;
@@ -56,5 +64,16 @@ private:
     int mCurZoom;
     QRect mCurRect;
     QMap<int, QMap<QGV::GeoTilePos, QGVDrawItem*>> mIndex;
+
     QElapsedTimer mLastAnimation;
+
+    struct
+    {
+        size_t TilesMarginWithZoomChange = 1;
+        size_t TilesMarginNoZoomChange = 3;
+        size_t AnimationUpdateDelayMs = 200;
+        bool CameraUpdatesDuringAnimation = true;
+        size_t VisibleZoomLayersBelowCurrent = 10;
+        size_t VisibleZoomLayersAboveCurrent = 10;
+    } mPerfomanceProfile;
 };
