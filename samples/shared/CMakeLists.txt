@@ -20,7 +20,7 @@ find_package(Qt${QT_VERSION} REQUIRED COMPONENTS
     Network
 )
 
-add_library(qgeoview-samples-shared
+add_library(qgeoview-samples-shared STATIC
     helpers.cpp
     helpers.h
     placemarkcircle.cpp
