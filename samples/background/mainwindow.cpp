@@ -101,9 +101,9 @@ QGroupBox* MainWindow::createOptionsList()
             widget->setLayout(new QHBoxLayout);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-            widget->layout()->setMargin(0);
-#else
             widget->layout()->setContentsMargins(QMargins{ 0, 0, 0, 0 });
+#else
+            widget->layout()->setMargin(0);
 #endif
 
             widget->layout()->addWidget(radioButton);
