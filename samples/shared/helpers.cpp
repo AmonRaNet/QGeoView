@@ -21,6 +21,10 @@
 #include <random>
 #endif
 
+#include <QDir>
+#include <QNetworkAccessManager>
+#include <QNetworkDiskCache>
+
 static auto initRand = []() {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     std::srand(std::time(nullptr));
@@ -66,4 +70,14 @@ QSizeF Helpers::randSize(int baseSize)
 #else
     return QSize(baseSize + (qrand() % range), baseSize + (qrand() % range));
 #endif
+}
+
+void Helpers::setupCachedNetworkAccessManager(QObject* parent)
+{
+    QDir("cacheDir").removeRecursively();
+    auto cache = new QNetworkDiskCache(parent);
+    cache->setCacheDirectory("cacheDir");
+    auto manager = new QNetworkAccessManager(parent);
+    manager->setCache(cache);
+    QGV::setNetworkManager(manager);
 }

@@ -32,7 +32,7 @@ MainWindow::MainWindow()
     mMap = new QGVMap(this);
     setCentralWidget(mMap);
 
-    QGV::setNetworkManager(new QNetworkAccessManager());
+    Helpers::setupCachedNetworkAccessManager(this);
 
     // Background layer
     auto osmLayer = new QGVLayerOSM();

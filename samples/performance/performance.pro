@@ -1,4 +1,4 @@
-TARGET = qgeoview-samples-layers
+TARGET = qgeoview-samples-performance
 TEMPLATE = app
 CONFIG-= console
 

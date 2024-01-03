@@ -34,8 +34,8 @@
 
 namespace {
 int wheelAreaMargin = 10;
-double wheelExponentDown = qPow(2, 1.0 / 5.0);
-double wheelExponentUp = qPow(2, 1.0 / 2.0);
+double wheelExponentDown = qPow(2, 1.0 / 2.0);
+double wheelExponentUp = qPow(2, 1.0 / 1.5);
 }
 
 QGVMapQGView::QGVMapQGView(QGVMap* geoMap)

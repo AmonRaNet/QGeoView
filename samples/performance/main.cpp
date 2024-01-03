@@ -16,31 +16,22 @@
  * along with this program; if not, see https://www.gnu.org/licenses.
  ****************************************************************************/
 
-#pragma once
+#include <QApplication>
+#include <QCommandLineParser>
 
-#include <QGroupBox>
-#include <QMainWindow>
+#include "mainwindow.h"
 
-#include <QGeoView/QGVLayer.h>
-#include <QGeoView/QGVMap.h>
-
-class MainWindow : public QMainWindow
+int main(int argc, char* argv[])
 {
-    Q_OBJECT
+    QApplication app(argc, argv);
+    app.setApplicationName("QGeoView Samples");
 
-public:
-    MainWindow();
-    ~MainWindow();
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.process(app);
 
-    QGV::GeoRect targetQGVArea() const;
-    QPixmap createQGVImage() const;
-    QGVLayer* createQGVLayer() const;
-    QAbstractAnimation* createQGVAnimation() const;
-
-    QGroupBox* createOptionsList();
-
-private:
-    QGVMap* mMap;
-    QGVLayer* mQGVLayer;
-    QAbstractAnimation* mQGVAnimation;
-};
+    MainWindow window;
+    window.show();
+    return app.exec();
+}

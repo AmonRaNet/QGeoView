@@ -21,16 +21,46 @@
 
 #include <QtMath>
 
-namespace {
-int minMargin = 1;
-int maxMargin = 3;
-int msAnimationUpdateDelay = 250;
-}
-
 QGVLayerTiles::QGVLayerTiles()
 {
     mCurZoom = -1;
     sendToBack();
+}
+
+void QGVLayerTiles::setTilesMarginWithZoomChange(size_t value)
+{
+    mPerfomanceProfile.TilesMarginWithZoomChange = value;
+    qgvDebug() << "TilesMarginWithZoomChange changed to" << value;
+}
+
+void QGVLayerTiles::setTilesMarginNoZoomChange(size_t value)
+{
+    mPerfomanceProfile.TilesMarginNoZoomChange = value;
+    qgvDebug() << "TilesMarginNoZoomChange changed to" << value;
+}
+
+void QGVLayerTiles::setAnimationUpdateDelayMs(size_t value)
+{
+    mPerfomanceProfile.AnimationUpdateDelayMs = value;
+    qgvDebug() << "AnimationUpdateDelayMs changed to" << value;
+}
+
+void QGVLayerTiles::setVisibleZoomLayersBelowCurrent(size_t value)
+{
+    mPerfomanceProfile.VisibleZoomLayersBelowCurrent = value;
+    qgvDebug() << "VisibleZoomLayersBelowCurrent changed to" << value;
+}
+
+void QGVLayerTiles::setVisibleZoomLayersAboveCurrent(size_t value)
+{
+    mPerfomanceProfile.VisibleZoomLayersAboveCurrent = value;
+    qgvDebug() << "VisibleZoomLayersAboveCurrent changed to" << value;
+}
+
+void QGVLayerTiles::setCameraUpdatesDuringAnimation(bool value)
+{
+    mPerfomanceProfile.CameraUpdatesDuringAnimation = value;
+    qgvDebug() << "CameraUpdatesDuringAnimation changed to" << value;
 }
 
 void QGVLayerTiles::onProjection(QGVMap* geoMap)
@@ -41,15 +71,19 @@ void QGVLayerTiles::onProjection(QGVMap* geoMap)
 void QGVLayerTiles::onCamera(const QGVCameraState& oldState, const QGVCameraState& newState)
 {
     QGVLayer::onCamera(oldState, newState);
+
     if (oldState == newState) {
         return;
     }
 
     bool needUpdate = true;
+
     if (newState.animation()) {
-        if (!mLastAnimation.isValid()) {
+        if (!mPerfomanceProfile.CameraUpdatesDuringAnimation) {
+            needUpdate = false;
+        } else if (!mLastAnimation.isValid()) {
             mLastAnimation.start();
-        } else if (mLastAnimation.elapsed() < msAnimationUpdateDelay) {
+        } else if (mLastAnimation.elapsed() < static_cast<qint64>(mPerfomanceProfile.AnimationUpdateDelayMs)) {
             needUpdate = false;
         } else {
             mLastAnimation.restart();
@@ -57,6 +91,7 @@ void QGVLayerTiles::onCamera(const QGVCameraState& oldState, const QGVCameraStat
     } else {
         mLastAnimation.invalidate();
     }
+
     if (needUpdate) {
         processCamera();
     }
@@ -123,7 +158,8 @@ void QGVLayerTiles::processCamera()
     const bool zoomChanged = (mCurZoom != newZoom);
     mCurZoom = newZoom;
 
-    const int margin = (zoomChanged) ? minMargin : maxMargin;
+    const int margin =
+            (zoomChanged) ? mPerfomanceProfile.TilesMarginWithZoomChange : mPerfomanceProfile.TilesMarginNoZoomChange;
     const int sizePerZoom = static_cast<int>(qPow(2, mCurZoom));
     const QRect maxRect = QRect(QPoint(0, 0), QPoint(sizePerZoom, sizePerZoom));
     const QPoint topLeft = QGV::GeoTilePos::geoToTilePos(mCurZoom, areaGeoRect.topLeft()).pos();
@@ -147,17 +183,15 @@ void QGVLayerTiles::processCamera()
                 for (const QGV::GeoTilePos& current : existingTiles(zoom)) {
                     removeAllAbove(current);
                 }
-                continue;
-            }
-            for (const QGV::GeoTilePos& nonCurrent : existingTiles(zoom)) {
-                if (!isTileFinished(nonCurrent)) {
-                    qgvDebug() << "cancel non-finished" << nonCurrent;
-                    removeTile(nonCurrent);
-                    continue;
-                }
-                if (zoom < mCurZoom) {
-                    removeWhenCovered(nonCurrent);
-                    continue;
+            } else {
+                for (const QGV::GeoTilePos& nonCurrent : existingTiles(zoom)) {
+                    if (!isTileFinished(nonCurrent)) {
+                        qgvDebug() << "cancel non-finished" << nonCurrent;
+                        removeTile(nonCurrent);
+                    } else if (zoom < mCurZoom) {
+                        removeWhenCovered(nonCurrent);
+                    }
+                    removeForPerfomance(nonCurrent);
                 }
             }
         }
@@ -184,6 +218,7 @@ void QGVLayerTiles::processCamera()
             missing.insert(radius, tilePos);
         }
     }
+
     for (const QGV::GeoTilePos& tilePos : missing) {
         addTile(tilePos, nullptr);
     }
@@ -226,6 +261,17 @@ void QGVLayerTiles::removeWhenCovered(const QGV::GeoTilePos& tilePos)
         removeTile(tilePos);
     } else {
         qgvDebug() << tilePos << "covered" << neededCount - count << "/" << neededCount;
+    }
+}
+
+void QGVLayerTiles::removeForPerfomance(const QGV::GeoTilePos& tilePos)
+{
+    const auto minZoom = mCurZoom - static_cast<int>(mPerfomanceProfile.VisibleZoomLayersBelowCurrent);
+    const auto maxZoom = mCurZoom + static_cast<int>(mPerfomanceProfile.VisibleZoomLayersAboveCurrent);
+
+    if (tilePos.zoom() < minZoom || tilePos.zoom() > maxZoom) {
+        qgvDebug() << "delete because of performance request" << minZoom << maxZoom;
+        removeTile(tilePos);
     }
 }
 

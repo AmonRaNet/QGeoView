@@ -22,6 +22,7 @@
 #include <QMainWindow>
 
 #include <QGeoView/QGVLayer.h>
+#include <QGeoView/QGVLayerTiles.h>
 #include <QGeoView/QGVMap.h>
 
 class MainWindow : public QMainWindow
@@ -32,15 +33,17 @@ public:
     MainWindow();
     ~MainWindow();
 
-    QGV::GeoRect targetQGVArea() const;
-    QPixmap createQGVImage() const;
-    QGVLayer* createQGVLayer() const;
-    QAbstractAnimation* createQGVAnimation() const;
+    QGV::GeoRect target10000Area() const;
+    QGVLayer* create10000Layer() const;
 
     QGroupBox* createOptionsList();
 
+    void flyToRandomArea();
+    void setupProfileLook();
+    void setupProfileBalance();
+    void setupProfileFast();
+
 private:
     QGVMap* mMap;
-    QGVLayer* mQGVLayer;
-    QAbstractAnimation* mQGVAnimation;
+    QGVLayerTiles* mBackground;
 };

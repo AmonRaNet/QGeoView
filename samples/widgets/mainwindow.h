@@ -20,8 +20,6 @@
 
 #include <QGroupBox>
 #include <QMainWindow>
-#include <QNetworkAccessManager>
-#include <QNetworkDiskCache>
 
 #include <QGeoView/QGVMap.h>
 
@@ -38,7 +36,5 @@ public:
     QGroupBox* createOptionsList();
 
 private:
-    QNetworkAccessManager* mManager;
-    QNetworkDiskCache* mCache;
     QGVMap* mMap;
 };

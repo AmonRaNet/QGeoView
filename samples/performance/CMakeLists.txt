@@ -20,13 +20,13 @@ find_package(Qt${QT_VERSION} REQUIRED COMPONENTS
     Network
 )
 
-add_executable(qgeoview-samples-background
+add_executable(qgeoview-samples-performance
     main.cpp
     mainwindow.h
     mainwindow.cpp
 )
 
-target_link_libraries(qgeoview-samples-background
+target_link_libraries(qgeoview-samples-performance
     PRIVATE
     Qt${QT_VERSION}::Core
     Qt${QT_VERSION}::Network

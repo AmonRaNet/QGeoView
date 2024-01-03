@@ -18,10 +18,12 @@
 
 #include "mainwindow.h"
 
-#include <QButtonGroup>
 #include <QGeoView/QGVLayerBing.h>
 #include <QGeoView/QGVLayerGoogle.h>
 #include <QGeoView/QGVLayerOSM.h>
+#include <helpers.h>
+
+#include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QRadioButton>
@@ -34,7 +36,7 @@ MainWindow::MainWindow()
     setCentralWidget(new QWidget());
     centralWidget()->setLayout(new QVBoxLayout());
 
-    QGV::setNetworkManager(new QNetworkAccessManager());
+    Helpers::setupCachedNetworkAccessManager(this);
 
     mMap = new QGVMap(this);
     centralWidget()->layout()->addWidget(mMap);

@@ -26,6 +26,7 @@
 #include <QGeoView/QGVWidgetCompass.h>
 #include <QGeoView/QGVWidgetScale.h>
 #include <QGeoView/QGVWidgetZoom.h>
+#include <helpers.h>
 
 MainWindow::MainWindow()
 {
@@ -34,7 +35,7 @@ MainWindow::MainWindow()
     setCentralWidget(new QWidget());
     centralWidget()->setLayout(new QVBoxLayout());
 
-    QGV::setNetworkManager(new QNetworkAccessManager());
+    Helpers::setupCachedNetworkAccessManager(this);
 
     mMap = new QGVMap(this);
     centralWidget()->layout()->addWidget(mMap);

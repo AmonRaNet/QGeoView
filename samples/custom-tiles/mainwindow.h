@@ -19,8 +19,6 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QNetworkAccessManager>
-#include <QNetworkDiskCache>
 
 #include <QGeoView/QGVMap.h>
 
@@ -35,7 +33,5 @@ public:
     QGV::GeoRect targetArea() const;
 
 private:
-    QNetworkAccessManager* mManager;
-    QNetworkDiskCache* mCache;
     QGVMap* mMap;
 };

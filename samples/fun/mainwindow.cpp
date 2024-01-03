@@ -25,6 +25,7 @@
 
 #include <functional>
 
+#include <helpers.h>
 #include <placemark.h>
 #include <waveanimation.h>
 
@@ -40,7 +41,7 @@ MainWindow::MainWindow()
     setCentralWidget(new QWidget());
     centralWidget()->setLayout(new QVBoxLayout());
 
-    QGV::setNetworkManager(new QNetworkAccessManager());
+    Helpers::setupCachedNetworkAccessManager(this);
 
     mMap = new QGVMap(this);
     centralWidget()->layout()->addWidget(mMap);
