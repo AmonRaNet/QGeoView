@@ -79,7 +79,6 @@ target_compile_definitions(qgeoview
         QGV_EXPORT
 )
 
-
 target_link_libraries(qgeoview
     PRIVATE
         Qt${QT_VERSION}::Core

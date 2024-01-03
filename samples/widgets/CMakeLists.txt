@@ -33,4 +33,5 @@ target_link_libraries(qgeoview-samples-widgets
     Qt${QT_VERSION}::Gui
     Qt${QT_VERSION}::Widgets
     QGeoView
+    qgeoview-samples-shared
 )

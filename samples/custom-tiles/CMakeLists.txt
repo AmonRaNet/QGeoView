@@ -37,4 +37,5 @@ target_link_libraries(qgeoview-samples-custom-tiles
     Qt${QT_VERSION}::Gui
     Qt${QT_VERSION}::Widgets
     QGeoView
+    qgeoview-samples-shared
 )
