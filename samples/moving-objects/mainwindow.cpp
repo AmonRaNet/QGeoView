@@ -21,6 +21,7 @@
 #include <QRandomGenerator>
 #include <QTimer>
 
+#include <helpers.h>
 #include <placemarkcircle.h>
 
 #include <QGeoView/QGVLayerOSM.h>
@@ -32,7 +33,7 @@ MainWindow::MainWindow()
     mMap = new QGVMap(this);
     setCentralWidget(mMap);
 
-    QGV::setNetworkManager(new QNetworkAccessManager());
+    Helpers::setupCachedNetworkAccessManager(this);
 
     // Background layer
     auto osmLayer = new QGVLayerOSM();

@@ -21,6 +21,8 @@
 #include <QGeoView/QGVMap.h>
 
 namespace Helpers {
+void setupCachedNetworkAccessManager(QObject* parent);
+
 QGV::GeoRect randRect(QGVMap* geoMap, const QGV::GeoRect& targetArea, const QSizeF& size);
 QGV::GeoRect randRect(QGVMap* geoMap, const QGV::GeoRect& targetArea, int baseSize);
 QGV::GeoPos randPos(const QGV::GeoRect& targetArea);

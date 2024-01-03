@@ -20,8 +20,6 @@
 
 #include <QGroupBox>
 #include <QMainWindow>
-#include <QNetworkAccessManager>
-#include <QNetworkDiskCache>
 
 #include <QGeoView/QGVLayer.h>
 #include <QGeoView/QGVMap.h>
@@ -42,8 +40,6 @@ public:
     void applySelectable(bool enabled);
 
 private:
-    QNetworkAccessManager* mManager;
-    QNetworkDiskCache* mCache;
     QGVMap* mMap;
     QGVLayer* mItemsLayer;
 };

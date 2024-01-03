@@ -19,8 +19,6 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QNetworkAccessManager>
-#include <QNetworkDiskCache>
 
 #include <QGeoView/QGVLayer.h>
 #include <QGeoView/QGVMap.h>
@@ -37,7 +35,5 @@ public:
     QGVLayer* create10000Layer() const;
 
 private:
-    QNetworkAccessManager* mManager;
-    QNetworkDiskCache* mCache;
     QGVMap* mMap;
 };

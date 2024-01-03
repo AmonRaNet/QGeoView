@@ -19,8 +19,6 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QNetworkAccessManager>
-#include <QNetworkDiskCache>
 
 #include <QGeoView/QGVMap.h>
 #include <placemarkcircle.h>
@@ -36,8 +34,6 @@ public:
     void moveObject(PlacemarkCircle* item);
 
 private:
-    QNetworkAccessManager* mManager;
-    QNetworkDiskCache* mCache;
     QGVMap* mMap;
     QTimer* mTimer;
 };
