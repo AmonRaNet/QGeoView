@@ -1,0 +1,11 @@
+name: Build events
+
+on:
+  issue_comment:
+    types: [created, edited, deleted]
+
+jobs:
+  build:
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.html_url, '/cmake-build') }}
+    uses: ./.github/workflows/cmake.yaml
+    secrets: inherit
