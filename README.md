@@ -80,6 +80,8 @@ For additional help, join in the [AmonRaNet Discord](https://discord.gg/bxYJsrkB
 **bakerb845** for helping with Qt6 adaptation
 **raffmont** for adding new features and capabilities
 
+all others who helps and supports QGeoView!
+
 ## Versioning
 
 QGeoView uses [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/AmonRaNet/QGeoView/tags).
