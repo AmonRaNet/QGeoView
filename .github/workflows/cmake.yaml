@@ -2,13 +2,13 @@ name: CMake
 
 on:
   push:
-    paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
+    paths:
+      - 'lib/**'
+      - 'samples/**'
   pull_request:
-    paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
+    paths:
+      - 'lib/**'
+      - 'samples/**'
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
