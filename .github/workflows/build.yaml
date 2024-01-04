@@ -9,6 +9,7 @@ on:
     paths:
       - 'lib/**'
       - 'samples/**'
+  workflow_call:
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
