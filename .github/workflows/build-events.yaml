@@ -6,6 +6,6 @@ on:
 
 jobs:
   build:
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.html_url, '/force-build') }}
+    if: github.event.issue.pull_request && contains(github.event.comment.html_url, '/force-build')
     uses: ./.github/workflows/build.yaml
     secrets: inherit
