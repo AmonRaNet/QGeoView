@@ -2,7 +2,14 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_AUTOMOC ON)
 
 # Set the QT version
-find_package(Qt6 COMPONENTS Core QUIET)
+option(USE_QT_5 "Force Qt 5 usage" OFF)
+
+if (${USE_QT_5})
+  message(STATUS "Will use Qt 5")
+else()
+  find_package(Qt6 COMPONENTS Core QUIET)
+endif()
+
 if (NOT Qt6_FOUND)
     set(QT_VERSION 5 CACHE STRING "Qt version for QGeoView")
 else()
