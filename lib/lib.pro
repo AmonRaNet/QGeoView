@@ -61,7 +61,10 @@ INCLUDEPATH += \
     $$PWD/include/ \
     $$PWD/include/QGeoView/
 
-DESTDIR = $$(QGV_DESTDIR)
+!isEmpty(QGV_DESTDIR){
+    DESTDIR = $$QGV_DESTDIR
+    message(DESTDIR will be changed to \"$$DESTDIR\")
+}
 
 target.path = $${DESTDIR}/lib
 target.CONFIG = no_check_exist
