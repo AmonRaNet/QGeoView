@@ -2,6 +2,8 @@ TARGET = qgeoview-samples-custom-tiles
 TEMPLATE = app
 CONFIG-= console
 
+QT += gui widgets network
+
 include(../../lib/lib.pri)
 include(../shared/shared.pri)
 

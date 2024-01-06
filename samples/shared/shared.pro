@@ -1,6 +1,8 @@
 TARGET = qgeoview-samples-shared
 TEMPLATE = lib
 
+QT += gui widgets network
+
 include(../../lib/lib.pri)
 
 LIBS += -L$$OUT_PWD/../../lib -lqgeoview

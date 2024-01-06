@@ -2,6 +2,8 @@ TARGET = qgeoview-samples-widgets
 TEMPLATE = app
 CONFIG-= console
 
+QT += gui widgets network
+
 include(../../lib/lib.pri)
 include(../shared/shared.pri)
 
