@@ -5,26 +5,28 @@ on:
     paths:
       - 'lib/**'
       - 'samples/**'
+      - '.github/workflows/build*'
   pull_request:
     paths:
       - 'lib/**'
       - 'samples/**'
+      - '.github/workflows/build*'
   workflow_call:
 
 env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  # Customize the build type here (Release, Debug)
   BUILD_TYPE: Release
 
 jobs:
   ubuntu:
     runs-on: ubuntu-${{ matrix.ubuntu_version }}
-    name: Ubuntu-${{ matrix.ubuntu_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    name: Ubuntu-${{ matrix.ubuntu_version }}-Qt-${{ matrix.qt_version }}-${{ matrix.build }}
     strategy:
       fail-fast: false
       matrix:
         ubuntu_version: [20.04, 22.04]
         qt_version: [5.12.12, 5.15.2, 6.4.0]
-        shared: [ON, OFF]
+        build: [cmake+qmake]
 
     steps:
     - name: Checkout
@@ -38,21 +40,29 @@ jobs:
           cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
           dir: ${{ github.workspace }}/Qt
 
-    - name: Configure CMake
-      run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ matrix.shared }} -B "${{github.workspace}}/build"
+    - name: CMake build
+      if: contains(matrix.build, 'cmake')
+      run: |
+         cmake -DBUILD_SHARED_LIBS=ON -B "${{github.workspace}}/cmake-build"
+         cmake --build ${{github.workspace}}/cmake-build --config ${{env.BUILD_TYPE}}
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: qmake build
+      if: contains(matrix.build, 'qmake')
+      run: |
+         mkdir "${{github.workspace}}/qmake-build"
+         cd "${{github.workspace}}/qmake-build"
+         qmake .. CONFIG+=${{env.BUILD_TYPE}}
+         make
 
   MSVC:
     runs-on: windows-${{ matrix.win_version }}
-    name: windows-${{ matrix.win_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    name: windows-${{ matrix.win_version }}-Qt-${{ matrix.qt_version }}-${{ matrix.build }}
     strategy:
       fail-fast: false
       matrix:
         win_version: [2019, 2022]
         qt_version: [5.12.12, 5.15.2, 6.4.0]
-        shared: [ON, OFF]
+        build: [cmake+qmake]
 
     steps:
       - name: Checkout
@@ -66,21 +76,32 @@ jobs:
             cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
             dir: ${{ github.workspace }}/Qt
 
-      - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ matrix.shared }} -B "${{github.workspace}}/build"
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: CMake build
+        if: contains(matrix.build, 'cmake')
+        run: |
+           cmake -DBUILD_SHARED_LIBS=ON -B "${{github.workspace}}/cmake-build"
+           cmake --build ${{github.workspace}}/cmake-build --config ${{env.BUILD_TYPE}}
+
+      - name: qmake build
+        if: contains(matrix.build, 'qmake')
+        run: |
+           mkdir "${{github.workspace}}/qmake-build"
+           cd "${{github.workspace}}/qmake-build"
+           qmake .. CONFIG+=${{env.BUILD_TYPE}}
+           nmake
 
   macos:
     runs-on: macos-${{ matrix.macos_version }}
-    name: macos-${{ matrix.macos_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    name: macos-${{ matrix.macos_version }}-Qt-${{ matrix.qt_version }}-${{ matrix.build }}
     strategy:
       fail-fast: false
       matrix:
         macos_version: [11, 12]
         qt_version: [5.15.2, 6.4.0]
-        shared: [ON, OFF]
+        build: [cmake+qmake]
 
     steps:
       - name: Checkout
@@ -94,8 +115,16 @@ jobs:
             cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
             dir: ${{ github.workspace }}/Qt
 
-      - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ matrix.shared }} -B "${{github.workspace}}/build"
+      - name: CMake build
+        if: contains(matrix.build, 'cmake')
+        run: |
+           cmake -DBUILD_SHARED_LIBS=ON -B "${{github.workspace}}/cmake-build"
+           cmake --build ${{github.workspace}}/cmake-build --config ${{env.BUILD_TYPE}}
 
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: qmake build
+        if: contains(matrix.build, 'qmake')
+        run: |
+           mkdir "${{github.workspace}}/qmake-build"
+           cd "${{github.workspace}}/qmake-build"
+           qmake .. CONFIG+=${{env.BUILD_TYPE}}
+           make
