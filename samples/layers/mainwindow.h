@@ -19,9 +19,9 @@
 #pragma once
 
 #include <QGroupBox>
+#include <QListWidget>
 #include <QMainWindow>
 
-#include <QGeoView/QGVLayer.h>
 #include <QGeoView/QGVMap.h>
 
 class MainWindow : public QMainWindow
@@ -34,8 +34,14 @@ public:
 
     QGV::GeoRect targetArea() const;
 
+    QGroupBox* createOptionsList();
     QGroupBox* createLayersList();
+
+    void addLayer();
+    void removeLayer();
+    void updateListOfLayers();
 
 private:
     QGVMap* mMap;
+    QListWidget* mList;
 };
