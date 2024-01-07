@@ -23,11 +23,9 @@
 #include <QNetworkDiskCache>
 #include <QRandomGenerator>
 
-namespace {
-int randomInt()
+int Helpers::randomInt(int lowest, int highest)
 {
-    return static_cast<int>(QRandomGenerator::global()->generate());
-}
+    return static_cast<int>(QRandomGenerator::global()->bounded(lowest, highest));
 }
 
 QGV::GeoRect Helpers::randRect(QGVMap* geoMap, const QGV::GeoRect& targetArea, const QSizeF& size)
@@ -49,15 +47,15 @@ QGV::GeoPos Helpers::randPos(const QGV::GeoRect& targetArea)
     const double lonRange = targetArea.lonRigth() - targetArea.lonLeft();
     static const int range = 1000;
 
-    return { targetArea.latBottom() + latRange * (randomInt() % range) / range,
-             targetArea.lonLeft() + lonRange * (randomInt() % range) / range };
+    return { targetArea.latBottom() + latRange * (randomInt(0, range)) / range,
+             targetArea.lonLeft() + lonRange * (randomInt(0, range)) / range };
 }
 
 QSizeF Helpers::randSize(int baseSize)
 {
-    const int range = -baseSize / 2;
+    const int range = baseSize / 2;
 
-    return QSize(baseSize + (randomInt() % range), baseSize + (randomInt() % range));
+    return QSize(baseSize + (randomInt(0, range)), baseSize - (randomInt(0, range)));
 }
 
 void Helpers::setupCachedNetworkAccessManager(QObject* parent)
