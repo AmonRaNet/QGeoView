@@ -45,6 +45,7 @@ MainWindow::MainWindow()
     // Widgets
     mMap->addWidget(new QGVWidgetCompass());
     mMap->addWidget(new QGVWidgetZoom());
+    mMap->addWidget(new QGVWidgetScale());
 
     // Background layer
     auto osmLayer = new QGVLayerOSM();
