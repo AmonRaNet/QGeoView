@@ -4,9 +4,7 @@ CONFIG += staticlib
 
 QT += gui widgets network
 
-include(../../lib/lib.pri)
-
-LIBS += -L$$OUT_PWD/../../lib -lqgeoview
+include(../lib.pri)
 
 SOURCES += \
     $$PWD/helpers.cpp \
@@ -17,6 +15,3 @@ HEADERS += \
     $$PWD/helpers.h \
     $$PWD/placemarkcircle.h \
     $$PWD/rectangle.h
-
-INCLUDEPATH += \
-    $$PWD/
