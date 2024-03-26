@@ -18,8 +18,7 @@
 
 #pragma once
 
-#include "QGVDrawItem.h"
-#include <QNetworkReply>
+#include <QGeoView/QGVDrawItem.h>
 
 class QGV_LIB_DECL QGVImage : public QGVDrawItem
 {
@@ -29,39 +28,29 @@ public:
     QGVImage();
 
     void setGeometry(const QGV::GeoRect& geoRect);
-    void setGeometry(const QGV::GeoPos& geoPos, const QSize& imageSize = QSize(), const QPoint& imageAnchor = QPoint());
+    void setGeometry(const QRectF& projRect);
 
     QImage getImage() const;
     bool isImage() const;
 
-    void load(const QString& url);
     void loadImage(const QByteArray& rawData);
     void loadImage(const QImage& image);
+
+    void setCeilingOnScale(bool enabled);
 
 protected:
     void onProjection(QGVMap* geoMap) override;
     QPainterPath projShape() const override;
-    QPointF projAnchor() const override;
     void projPaint(QPainter* painter) override;
 
 private:
-    void onReplyFinished();
     void calculateGeometry();
 
 private:
-    enum class GeometryType
-    {
-        None,
-        ByRect,
-        ByPos,
-    } mGeometryType;
     QGV::GeoRect mGeoRect;
-    QGV::GeoPos mGeoPos;
-    QSize mImageSize;
-    QPoint mImageAnchor;
     QRectF mProjRect;
-    QPointF mProjAnchor;
+
     QString mUrl;
     QImage mImage;
-    QScopedPointer<QNetworkReply> mReply;
+    bool mCeilingOnScale;
 };

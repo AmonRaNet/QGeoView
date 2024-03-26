@@ -18,17 +18,39 @@
 
 #include "placemark.h"
 
+#include <QNetworkReply>
+
 Placemark::Placemark(const QGV::GeoPos& geoPos)
 {
-    setFlag(QGV::ItemFlag::IgnoreScale);
-    setFlag(QGV::ItemFlag::IgnoreAzimuth);
-    setFlag(QGV::ItemFlag::Highlightable);
-    setFlag(QGV::ItemFlag::HighlightCustom);
     setFlag(QGV::ItemFlag::Highlightable);
     setFlag(QGV::ItemFlag::Transformed);
-    setGeometry(geoPos, QSize(32, 32), QPoint(16, 32));
-    const QString url = "http://maps.google.com/mapfiles/kml/paddle/blu-circle.png";
-    load(url);
+    setGeometry(geoPos, QSize(32, 32));
+
+    load(QUrl{ "http://maps.google.com/mapfiles/kml/paddle/blu-circle.png" });
+}
+
+void Placemark::load(const QUrl& url)
+{
+    QNetworkRequest request(url);
+    request.setRawHeader("User-Agent",
+                         "Mozilla/5.0 (Windows; U; MSIE "
+                         "6.0; Windows NT 5.1; SV1; .NET "
+                         "CLR 2.0.50727)");
+    request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+
+    QNetworkReply* reply = QGV::getNetworkManager()->get(request);
+    connect(reply, &QNetworkReply::finished, reply, [reply, this]() {
+        if (reply->error() != QNetworkReply::NoError) {
+            qgvCritical() << "ERROR" << reply->errorString();
+            reply->deleteLater();
+            return;
+        }
+        loadImage(reply->readAll());
+        reply->deleteLater();
+    });
+
+    qgvDebug() << "request" << url;
 }
 
 QTransform Placemark::projTransform() const

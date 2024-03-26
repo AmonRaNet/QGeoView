@@ -17,7 +17,7 @@
  ****************************************************************************/
 
 #include "QGVLayerTilesOnline.h"
-#include "QGVImage.h"
+#include "Raster/QGVImage.h"
 
 QGVLayerTilesOnline::~QGVLayerTilesOnline()
 {

@@ -16,20 +16,22 @@
  * along with this program; if not, see https://www.gnu.org/licenses.
  ****************************************************************************/
 
-#pragma once
+#include <QApplication>
+#include <QCommandLineParser>
 
-#include <QGeoView/Raster/QGVIcon.h>
+#include "mainwindow.h"
 
-class Placemark : public QGVIcon
+int main(int argc, char* argv[])
 {
-    Q_OBJECT
+    QApplication app(argc, argv);
+    app.setApplicationName("QGeoView Samples");
 
-public:
-    explicit Placemark(const QGV::GeoPos& geoPos);
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.process(app);
 
-    void load(const QUrl& url);
-
-private:
-    QTransform projTransform() const override;
-    void projOnFlags() override;
-};
+    MainWindow window;
+    window.show();
+    return app.exec();
+}
