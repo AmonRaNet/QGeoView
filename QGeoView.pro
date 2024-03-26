@@ -8,6 +8,7 @@ SUBDIRS = \
     samples/widgets \
     samples/flags \
     samples/layers \
+    samples/raster \
     samples/fun \
     samples/10000 \
     samples/debug \

@@ -10,7 +10,6 @@ HEADERS += \
     $$PWD/include/QGeoView/QGVDrawItem.h \
     $$PWD/include/QGeoView/QGVGlobal.h \
     $$PWD/include/QGeoView/QGVUtils.h \
-    $$PWD/include/QGeoView/QGVImage.h \
     $$PWD/include/QGeoView/QGVItem.h \
     $$PWD/include/QGeoView/QGVLayer.h \
     $$PWD/include/QGeoView/QGVLayerBing.h \
@@ -29,14 +28,15 @@ HEADERS += \
     $$PWD/include/QGeoView/QGVWidgetCompass.h \
     $$PWD/include/QGeoView/QGVWidgetScale.h \
     $$PWD/include/QGeoView/QGVWidgetText.h \
-    $$PWD/include/QGeoView/QGVWidgetZoom.h
+    $$PWD/include/QGeoView/QGVWidgetZoom.h \
+    $$PWD/include/QGeoView/Raster/QGVImage.h \
+    $$PWD/include/QGeoView/Raster/QGVIcon.h \
 
 SOURCES += \
     $$PWD/src/QGVCamera.cpp \
     $$PWD/src/QGVDrawItem.cpp \
     $$PWD/src/QGVGlobal.cpp \
     $$PWD/src/QGVUtils.cpp \
-    $$PWD/src/QGVImage.cpp \
     $$PWD/src/QGVItem.cpp \
     $$PWD/src/QGVLayer.cpp \
     $$PWD/src/QGVLayerBing.cpp \
@@ -55,7 +55,9 @@ SOURCES += \
     $$PWD/src/QGVWidgetCompass.cpp \
     $$PWD/src/QGVWidgetScale.cpp \
     $$PWD/src/QGVWidgetText.cpp \
-    $$PWD/src/QGVWidgetZoom.cpp
+    $$PWD/src/QGVWidgetZoom.cpp \
+    $$PWD/src/Raster/QGVImage.cpp \
+    $$PWD/src/Raster/QGVIcon.cpp
 
 INCLUDEPATH += \
     $$PWD/include/ \

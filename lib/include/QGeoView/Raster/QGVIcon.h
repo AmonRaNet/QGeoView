@@ -18,18 +18,38 @@
 
 #pragma once
 
-#include <QGeoView/Raster/QGVIcon.h>
+#include <QGeoView/QGVDrawItem.h>
 
-class Placemark : public QGVIcon
+class QGV_LIB_DECL QGVIcon : public QGVDrawItem
 {
     Q_OBJECT
 
 public:
-    explicit Placemark(const QGV::GeoPos& geoPos);
+    QGVIcon();
 
-    void load(const QUrl& url);
+    void setGeometry(const QGV::GeoPos& geoPos, const QSizeF& imageSize = QSizeF());
+    void setGeometry(const QPointF& projPos, const QSizeF& imageSize = QSizeF());
+
+    QImage getImage() const;
+    bool isImage() const;
+
+    void loadImage(const QByteArray& rawData);
+    void loadImage(const QImage& image);
+
+protected:
+    void onProjection(QGVMap* geoMap) override;
+    QPainterPath projShape() const override;
+    void projPaint(QPainter* painter) override;
 
 private:
-    QTransform projTransform() const override;
-    void projOnFlags() override;
+    void calculateGeometry();
+
+private:
+    QGV::GeoPos mGeoPos;
+    QPointF mProjPos;
+    QSizeF mImageSize;
+    QRectF mProjRect;
+
+    QString mUrl;
+    QImage mImage;
 };

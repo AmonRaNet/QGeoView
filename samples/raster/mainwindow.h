@@ -18,18 +18,39 @@
 
 #pragma once
 
-#include <QGeoView/Raster/QGVIcon.h>
+#include <QGroupBox>
+#include <QListWidget>
+#include <QMainWindow>
 
-class Placemark : public QGVIcon
+#include <QGeoView/QGVLayer.h>
+#include <QGeoView/QGVMap.h>
+
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit Placemark(const QGV::GeoPos& geoPos);
+    MainWindow();
+    ~MainWindow();
 
-    void load(const QUrl& url);
+    QGV::GeoRect targetArea() const;
+
+    QGroupBox* createOptionsList();
+    QGroupBox* createItemsList();
+
+    void preloadImages();
+    void loadImage(QImage& dest, QUrl url);
+
+    void addImage();
+    void addIcon();
+    void removeLast();
+    void updateListOfItems();
 
 private:
-    QTransform projTransform() const override;
-    void projOnFlags() override;
+    QGVMap* mMap;
+    QGVLayer* mLayer;
+    QListWidget* mList;
+
+    QImage mImage;
+    QImage mIcon;
 };

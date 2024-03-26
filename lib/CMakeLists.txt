@@ -36,7 +36,6 @@ add_library(qgeoview SHARED
     include/QGeoView/QGVItem.h
     include/QGeoView/QGVDrawItem.h
     include/QGeoView/QGVLayer.h
-    include/QGeoView/QGVImage.h
     include/QGeoView/QGVLayerTiles.h
     include/QGeoView/QGVLayerTilesOnline.h
     include/QGeoView/QGVLayerGoogle.h
@@ -48,6 +47,8 @@ add_library(qgeoview SHARED
     include/QGeoView/QGVWidgetScale.h
     include/QGeoView/QGVWidgetZoom.h
     include/QGeoView/QGVWidgetText.h
+    include/QGeoView/Raster/QGVImage.h
+    include/QGeoView/Raster/QGVIcon.h
     src/QGVUtils.cpp
     src/QGVGlobal.cpp
     src/QGVProjection.cpp
@@ -60,7 +61,6 @@ add_library(qgeoview SHARED
     src/QGVItem.cpp
     src/QGVDrawItem.cpp
     src/QGVLayer.cpp
-    src/QGVImage.cpp
     src/QGVLayerTiles.cpp
     src/QGVLayerTilesOnline.cpp
     src/QGVLayerGoogle.cpp
@@ -72,6 +72,8 @@ add_library(qgeoview SHARED
     src/QGVWidgetScale.cpp
     src/QGVWidgetZoom.cpp
     src/QGVWidgetText.cpp
+    src/Raster/QGVImage.cpp
+    src/Raster/QGVIcon.cpp
 )
 
 target_include_directories(qgeoview
