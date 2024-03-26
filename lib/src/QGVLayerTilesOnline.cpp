@@ -24,25 +24,16 @@ QGVLayerTilesOnline::~QGVLayerTilesOnline()
     qDeleteAll(mRequest);
 }
 
-void QGVLayerTilesOnline::onProjection(QGVMap* geoMap)
-{
-    Q_ASSERT(QGV::getNetworkManager());
-    QGVLayerTiles::onProjection(geoMap);
-    connect(QGV::getNetworkManager(), &QNetworkAccessManager::finished, this, &QGVLayerTilesOnline::onReplyFinished);
-}
-
-void QGVLayerTilesOnline::onClean()
-{
-    Q_ASSERT(QGV::getNetworkManager());
-    disconnect(QGV::getNetworkManager(), 0, this, 0);
-}
-
 void QGVLayerTilesOnline::request(const QGV::GeoTilePos& tilePos)
 {
+    Q_ASSERT(QGV::getNetworkManager());
+
     const QUrl url(tilePosToUrl(tilePos));
+
     QNetworkRequest request(url);
     QSslConfiguration conf = request.sslConfiguration();
     conf.setPeerVerifyMode(QSslSocket::VerifyNone);
+
     request.setSslConfiguration(conf);
     request.setRawHeader("User-Agent",
                          "Mozilla/5.0 (Windows; U; MSIE "
@@ -50,11 +41,12 @@ void QGVLayerTilesOnline::request(const QGV::GeoTilePos& tilePos)
                          "CLR 2.0.50727)");
     request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+
     QNetworkReply* reply = QGV::getNetworkManager()->get(request);
-    reply->setProperty("TILE_OWNER", QVariant::fromValue(this));
-    reply->setProperty("TILE_REQUEST", true);
-    reply->setProperty("TILE_POS", QVariant::fromValue(tilePos));
+
     mRequest[tilePos] = reply;
+    connect(reply, &QNetworkReply::finished, reply, [this, reply, tilePos]() { onReplyFinished(reply, tilePos); });
+
     qgvDebug() << "request" << url;
 }
 
@@ -63,18 +55,8 @@ void QGVLayerTilesOnline::cancel(const QGV::GeoTilePos& tilePos)
     removeReply(tilePos);
 }
 
-void QGVLayerTilesOnline::onReplyFinished(QNetworkReply* reply)
+void QGVLayerTilesOnline::onReplyFinished(QNetworkReply* reply, const QGV::GeoTilePos& tilePos)
 {
-    const auto tileRequest = reply->property("TILE_REQUEST").toBool();
-    if (!tileRequest) {
-        return;
-    }
-    const auto tileOwner = reply->property("TILE_OWNER").value<QGVLayerTilesOnline*>();
-    if (tileOwner != this) {
-        return;
-    }
-    const auto tilePos = reply->property("TILE_POS").value<QGV::GeoTilePos>();
-
     if (reply->error() != QNetworkReply::NoError) {
         if (reply->error() != QNetworkReply::OperationCanceledError) {
             qgvCritical() << "ERROR" << reply->errorString();
