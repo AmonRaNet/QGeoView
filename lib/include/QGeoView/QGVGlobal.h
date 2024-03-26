@@ -106,10 +106,8 @@ class QGV_LIB_DECL GeoPos
 public:
     GeoPos();
     GeoPos(double lat, double lon);
-    GeoPos(const GeoPos& other);
-    GeoPos(const GeoPos&& other);
-    GeoPos& operator=(const GeoPos& other);
-    GeoPos& operator=(const GeoPos&& other);
+
+    bool isEmpty() const;
 
     double latitude() const;
     double longitude() const;
@@ -124,6 +122,7 @@ public:
     static QString latToString(double lat, const QString& format = "[+-]d");
 
 private:
+    bool mEmpty;
     double mLat;
     double mLon;
 };
@@ -134,10 +133,8 @@ public:
     GeoRect();
     GeoRect(double lat1, double lon1, double lat2, double lon2);
     GeoRect(GeoPos const& pos1, GeoPos const& pos2);
-    GeoRect(const GeoRect& other);
-    GeoRect(const GeoRect&& other);
-    GeoRect& operator=(const GeoRect& other);
-    GeoRect& operator=(const GeoRect&& other);
+
+    bool isEmpty() const;
 
     GeoPos topLeft() const;
     GeoPos topRight() const;

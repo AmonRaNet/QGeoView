@@ -32,41 +32,22 @@ QNetworkAccessManager* networkManager = nullptr;
 namespace QGV {
 
 GeoPos::GeoPos()
-    : mLat(0)
+    : mEmpty(true)
+    , mLat(0)
     , mLon(0)
 {
 }
 
 GeoPos::GeoPos(double lat, double lon)
+    : mEmpty(false)
 {
     setLat(lat);
     setLon(lon);
 }
 
-GeoPos::GeoPos(const GeoPos& other)
-    : mLat(other.latitude())
-    , mLon(other.longitude())
+bool GeoPos::isEmpty() const
 {
-}
-
-GeoPos::GeoPos(const GeoPos&& other)
-    : mLat(std::move(other.latitude()))
-    , mLon(std::move(other.longitude()))
-{
-}
-
-GeoPos& GeoPos::operator=(const GeoPos& other)
-{
-    mLat = other.latitude();
-    mLon = other.longitude();
-    return *this;
-}
-
-GeoPos& GeoPos::operator=(const GeoPos&& other)
-{
-    mLat = std::move(other.latitude());
-    mLon = std::move(other.longitude());
-    return *this;
+    return mEmpty;
 }
 
 double GeoPos::latitude() const
@@ -191,30 +172,9 @@ GeoRect::GeoRect(GeoPos const& pos1, GeoPos const& pos2)
     mBottomRight = GeoPos(qMin(pos1.latitude(), pos2.latitude()), qMax(pos1.longitude(), pos2.longitude()));
 }
 
-GeoRect::GeoRect(const GeoRect& other)
-    : mTopLeft(other.mTopLeft)
-    , mBottomRight(other.mBottomRight)
+bool GeoRect::isEmpty() const
 {
-}
-
-GeoRect::GeoRect(const GeoRect&& other)
-    : mTopLeft(std::move(other.mTopLeft))
-    , mBottomRight(std::move(other.mBottomRight))
-{
-}
-
-GeoRect& GeoRect::operator=(const GeoRect& other)
-{
-    mTopLeft = other.mTopLeft;
-    mBottomRight = other.mBottomRight;
-    return *this;
-}
-
-GeoRect& GeoRect::operator=(const GeoRect&& other)
-{
-    mTopLeft = std::move(other.mTopLeft);
-    mBottomRight = std::move(other.mBottomRight);
-    return *this;
+    return mTopLeft.isEmpty() || mBottomRight.isEmpty();
 }
 
 GeoPos GeoRect::topLeft() const
