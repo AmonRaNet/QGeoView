@@ -20,7 +20,7 @@ find_package(Qt${QT_VERSION} REQUIRED COMPONENTS
     Network
 )
 
-add_executable(qgeoview-samples-shapefile
+add_executable(qgeoview-samples-gdal-shapefile
     main.cpp
     mainwindow.h
     mainwindow.cpp
@@ -28,7 +28,7 @@ add_executable(qgeoview-samples-shapefile
     polygon.h
 )
 
-target_link_libraries(qgeoview-samples-shapefile
+target_link_libraries(qgeoview-samples-gdal-shapefile
     PRIVATE
     Qt${QT_VERSION}::Core
     Qt${QT_VERSION}::Network
