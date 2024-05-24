@@ -66,6 +66,7 @@ QGVMapQGView::QGVMapQGView(QGVMap* geoMap)
     setCacheMode(QGraphicsView::CacheBackground);
     setMouseTracking(true);
     setBackgroundBrush(QBrush(Qt::lightGray));
+    setAcceptDrops(true);
 }
 
 void QGVMapQGView::setMouseActions(QGV::MouseActions actions)
@@ -598,4 +599,33 @@ void QGVMapQGView::showEvent(QShowEvent* event)
 void QGVMapQGView::keyPressEvent(QKeyEvent* event)
 {
     QWidget::keyPressEvent(event);
+}
+
+void QGVMapQGView::dragEnterEvent(QDragEnterEvent *event)
+{
+    event->accept();
+}
+
+void QGVMapQGView::dragMoveEvent(QDragMoveEvent *event)
+{
+    event->accept();
+}
+
+void QGVMapQGView::dropEvent(QDropEvent *event)
+{
+    if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist"))
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        Q_EMIT dropData(event->position(), event->mimeData());
+#else
+        QPointF dropPoint = event->posF();
+        Q_EMIT dropData(dropPoint, event->mimeData());
+#endif
+    }
+    event->ignore();
+}
+
+void QGVMapQGView::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    event->accept();
 }
