@@ -251,7 +251,7 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
     if (mState != QGV::MapState::Wheel) {
         changeState(QGV::MapState::Wheel);
         mWheelMouseArea = QRect(eventPos, QSize(1, 1))
-                                  .adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
+                              .adjusted(-wheelAreaMargin, -wheelAreaMargin, wheelAreaMargin, wheelAreaMargin);
         mWheelProjAnchor = mapToScene(eventPos);
         mWheelBestFactor = mScale;
     } else {
@@ -356,9 +356,9 @@ void QGVMapQGView::zoomArea(QMouseEvent* event, QRect areaRect)
     const QGVCameraState oldState = getCamera();
     const QRectF oldProjRect = oldState.projRect();
     const double scaleFactor =
-            qMin(qAbs(oldProjRect.width() / newProjRect.width()), qAbs(oldProjRect.height() / newProjRect.height()));
+        qMin(qAbs(oldProjRect.width() / newProjRect.width()), qAbs(oldProjRect.height() / newProjRect.height()));
     auto fly =
-            new QGVCameraSimpleAnimation(QGVCameraActions(mGeoMap).scaleBy(scaleFactor).moveTo(newProjRect.center()));
+        new QGVCameraSimpleAnimation(QGVCameraActions(mGeoMap).scaleBy(scaleFactor).moveTo(newProjRect.center()));
     fly->setDuration(1500);
     fly->start(QAbstractAnimation::DeleteWhenStopped);
 }
@@ -614,10 +614,10 @@ void QGVMapQGView::dragMoveEvent(QDragMoveEvent* event)
 void QGVMapQGView::dropEvent(QDropEvent* event)
 {    
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	Q_EMIT dropData(event->position(), event->mimeData());
+    Q_EMIT dropData(event->position(), event->mimeData());
 #else
-	QPointF dropPoint = event->posF();
-	Q_EMIT dropData(dropPoint, event->mimeData());
+    QPointF dropPoint = event->posF();
+    Q_EMIT dropData(dropPoint, event->mimeData());
 #endif
     event->accept();
 }
