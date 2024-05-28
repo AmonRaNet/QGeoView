@@ -601,17 +601,17 @@ void QGVMapQGView::keyPressEvent(QKeyEvent* event)
     QWidget::keyPressEvent(event);
 }
 
-void QGVMapQGView::dragEnterEvent(QDragEnterEvent *event)
+void QGVMapQGView::dragEnterEvent(QDragEnterEvent* event)
 {
     event->accept();
 }
 
-void QGVMapQGView::dragMoveEvent(QDragMoveEvent *event)
+void QGVMapQGView::dragMoveEvent(QDragMoveEvent* event)
 {
     event->accept();
 }
 
-void QGVMapQGView::dropEvent(QDropEvent *event)
+void QGVMapQGView::dropEvent(QDropEvent* event)
 {
     if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist"))
     {
@@ -625,7 +625,7 @@ void QGVMapQGView::dropEvent(QDropEvent *event)
     event->ignore();
 }
 
-void QGVMapQGView::dragLeaveEvent(QDragLeaveEvent *event)
+void QGVMapQGView::dragLeaveEvent(QDragLeaveEvent* event)
 {
     event->accept();
 }

@@ -382,7 +382,7 @@ void QGVMap::mousePressEvent(QMouseEvent* event)
     QWidget::mousePressEvent(event);
 }
 
-void QGVMap::handleDropDataOnQGVMapQGView(QPointF position, const QMimeData *dropData)
+void QGVMap::handleDropDataOnQGVMapQGView(QPointF position, const QMimeData* dropData)
 {
     const auto mapToProjectionPos = mapToProj(QPoint(position.rx(), position.ry()));
     auto geoPos = getProjection()->projToGeo(mapToProjectionPos);
