@@ -612,17 +612,14 @@ void QGVMapQGView::dragMoveEvent(QDragMoveEvent* event)
 }
 
 void QGVMapQGView::dropEvent(QDropEvent* event)
-{
-    if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist"))
-    {
+{    
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        Q_EMIT dropData(event->position(), event->mimeData());
+	Q_EMIT dropData(event->position(), event->mimeData());
 #else
-        QPointF dropPoint = event->posF();
-        Q_EMIT dropData(dropPoint, event->mimeData());
+	QPointF dropPoint = event->posF();
+	Q_EMIT dropData(dropPoint, event->mimeData());
 #endif
-    }
-    event->ignore();
+    event->accept();
 }
 
 void QGVMapQGView::dragLeaveEvent(QDragLeaveEvent* event)
