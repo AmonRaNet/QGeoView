@@ -18,13 +18,13 @@
 
 #include "mainwindow.h"
 
-#include <QTimer>
 #include <QApplication>
 #include <QDir>
+#include <QTimer>
 
+#include "polygon.h"
 #include <QGeoView/QGVLayerOSM.h>
 #include <helpers.h>
-#include "polygon.h"
 
 #include "cpl_conv.h"
 #include "ogrsf_frmts.h"
@@ -69,14 +69,14 @@ MainWindow::MainWindow()
     CPLSetConfigOption("PROJ_DATA", PROJ_DATA.c_str());
 
     GDALAllRegister(); // Load GDAL drivers
-    GDALDataset *poDS = static_cast<GDALDataset*>(GDALOpenEx("countries.shp", GDAL_OF_VECTOR, NULL, NULL, NULL)); // Open vector file
+    GDALDataset* poDS = static_cast<GDALDataset*>(
+            GDALOpenEx("countries.shp", GDAL_OF_VECTOR, NULL, NULL, NULL)); // Open vector file
     if (poDS == NULL) {
         printf("Open failed.\n");
         exit(1);
     }
 
-    for (int iLayer = 0; iLayer < poDS->GetLayerCount(); iLayer++)
-    {
+    for (int iLayer = 0; iLayer < poDS->GetLayerCount(); iLayer++) {
         OGRLayer* poLayer = poDS->GetLayer(iLayer);
         OGRFeatureDefn* poFDefn = poLayer->GetLayerDefn();
         poLayer->ResetReading();
