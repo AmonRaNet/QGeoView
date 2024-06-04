@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <QMimeData>
 #include <QWidget>
 
 #include "QGVCamera.h"
@@ -104,6 +105,7 @@ Q_SIGNALS:
     void mapMouseMove(QPointF projPos);
     void mapMousePress(QPointF projPos);
     void mapMouseDoubleClicked(QPointF projPos);
+    void dropOnMap(QGV::GeoPos pos, const QMimeData* data);
 
 private:
     QScopedPointer<QGVProjection> mProjection;
@@ -111,4 +113,5 @@ private:
     QScopedPointer<QGVItem> mRootItem;
     QList<QGVWidget*> mWidgets;
     QSet<QGVItem*> mSelections;
+    void handleDropDataOnQGVMapQGView(QPointF position, const QMimeData* dropData);
 };
