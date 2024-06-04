@@ -25,7 +25,6 @@
 #include <QTimer>
 #include <QTreeWidgetItem>
 
-//#include <QGeoView/QGVLayerBDGEx.h>
 #include <QGeoView/QGVLayerGoogle.h>
 #include <QGeoView/Raster/QGVIcon.h>
 #include <helpers.h>
@@ -76,11 +75,6 @@ MainWindow::MainWindow(QWidget* parent)
     // QGeoView setup
     Helpers::setupCachedNetworkAccessManager(this);
     mMap = new QGVMap(this);
-
-    // Background layer
-    // QGVLayer * layerBDGExCTM250 = new QGVLayerBDGEx(QGV::BDGExLayer::ctm250);
-    // layerBDGExCTM250->setName("BDGEx CTM250");
-    // mMap->addItem(layerBDGExCTM250);
 
     QGVLayer* layerGoogleSchema = new QGVLayerGoogle(QGV::TilesType::Schema);
     layerGoogleSchema->setName("Google Schema");

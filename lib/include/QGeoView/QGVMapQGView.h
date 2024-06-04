@@ -23,7 +23,6 @@
 #include "QGVMapQGItem.h"
 #include "QGVMapRubberBand.h"
 
-
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
 #include <QDragMoveEvent>
