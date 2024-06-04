@@ -23,8 +23,13 @@
 #include "QGVMapQGItem.h"
 #include "QGVMapRubberBand.h"
 
+#include <QDragEnterEvent>
+#include <QDragLeaveEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
 #include <QGraphicsView>
 #include <QMenu>
+#include <QMimeData>
 
 class QGVMap;
 
@@ -44,6 +49,9 @@ public:
     double getMaxScale() const;
     void setScaleLimits(double minScale, double maxScale);
     void cleanState();
+
+Q_SIGNALS:
+    void dropData(QPointF position, const QMimeData* dropData);
 
 private:
     QRectF viewRect() const;
@@ -83,6 +91,10 @@ private:
     void resizeEvent(QResizeEvent* event) override final;
     void showEvent(QShowEvent* event) override final;
     void keyPressEvent(QKeyEvent* event) override final;
+    void dragEnterEvent(QDragEnterEvent* event) override final;
+    void dragMoveEvent(QDragMoveEvent* event) override final;
+    void dropEvent(QDropEvent* event) override final;
+    void dragLeaveEvent(QDragLeaveEvent* event) override final;
 
 private:
     QGVMap* mGeoMap;

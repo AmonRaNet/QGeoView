@@ -55,6 +55,7 @@ QGVMap::QGVMap(QWidget* parent)
     layout()->addWidget(mQGView.data());
     layout()->setContentsMargins(0, 0, 0, 0);
     refreshProjection();
+    connect(mQGView.data(), &QGVMapQGView::dropData, this, &QGVMap::handleDropDataOnQGVMapQGView);
 }
 
 QGVMap::~QGVMap()
@@ -379,4 +380,20 @@ void QGVMap::mousePressEvent(QMouseEvent* event)
     }
     event->ignore();
     QWidget::mousePressEvent(event);
+}
+
+void QGVMap::handleDropDataOnQGVMapQGView(QPointF position, const QMimeData* dropData)
+{
+    const auto mapToProjectionPos = mapToProj(QPoint(position.rx(), position.ry()));
+    auto geoPos = getProjection()->projToGeo(mapToProjectionPos);
+    Q_EMIT dropOnMap(geoPos, dropData);
+}
+
+void QGVMap::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if (hasMouseTracking()) {
+        Q_EMIT mapMouseDoubleClicked(mapToProj(event->pos()));
+    }
+    event->ignore();
+    QWidget::mouseDoubleClickEvent(event);
 }

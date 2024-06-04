@@ -16,4 +16,5 @@ SUBDIRS = \
     samples/custom-tiles \
     samples/moving-objects \
     samples/mouse-actions \
-    samples/camera-actions
+    samples/camera-actions \
+    samples/drag-and-drop

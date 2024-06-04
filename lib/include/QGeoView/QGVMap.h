@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <QMimeData>
 #include <QWidget>
 
 #include "QGVCamera.h"
@@ -90,6 +91,7 @@ public:
 protected:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void mouseDoubleClickEvent(QMouseEvent* event) override;
 
 Q_SIGNALS:
     void projectionChanged();
@@ -102,6 +104,8 @@ Q_SIGNALS:
     void itemDoubleClicked(QGVItem* item, QPointF projPos);
     void mapMouseMove(QPointF projPos);
     void mapMousePress(QPointF projPos);
+    void mapMouseDoubleClicked(QPointF projPos);
+    void dropOnMap(QGV::GeoPos pos, const QMimeData* data);
 
 private:
     QScopedPointer<QGVProjection> mProjection;
@@ -109,4 +113,5 @@ private:
     QScopedPointer<QGVItem> mRootItem;
     QList<QGVWidget*> mWidgets;
     QSet<QGVItem*> mSelections;
+    void handleDropDataOnQGVMapQGView(QPointF position, const QMimeData* dropData);
 };
