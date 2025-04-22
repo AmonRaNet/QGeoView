@@ -51,7 +51,7 @@ QGV::GeoRect Helpers::randRect(QGVMap* geoMap, const QGV::GeoRect& targetArea)
 QGV::GeoPos Helpers::randPos(const QGV::GeoRect& targetArea)
 {
     const double latRange = targetArea.latTop() - targetArea.latBottom();
-    const double lonRange = targetArea.lonRigth() - targetArea.lonLeft();
+    const double lonRange = targetArea.lonRight() - targetArea.lonLeft();
     static const int range = 1000;
 
     return { targetArea.latBottom() + latRange * (randomInt(0, range)) / range,
