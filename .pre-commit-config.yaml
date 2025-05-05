@@ -8,7 +8,7 @@ repos:
         language: script
         always_run: true
         pass_filenames: false
-        stages: [commit]
+        stages: [pre-commit]
 
   - repo: https://github.com/pocc/pre-commit-hooks
     rev: v1.1.1
