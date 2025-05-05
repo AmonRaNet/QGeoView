@@ -241,8 +241,11 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
     event->accept();
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-    const QPoint eventPos(event->position().x(), event->position().y());
-    const auto eventDelta = event->angleDelta().y();
+    const QPoint eventPos(qRound(event->position().x()), qRound(event->position().y()));
+    int eventDelta = event->angleDelta().y();
+    if (eventDelta == 0) {
+        eventDelta = event->pixelDelta().y();
+    }
 #else
     const QPoint eventPos(event->pos().x(), event->pos().y());
     const auto eventDelta = event->delta();
@@ -266,9 +269,9 @@ void QGVMapQGView::zoomByWheel(QWheelEvent* event)
     double newScale = mScale;
 
     if (eventDelta > 0) {
-        newScale *= wheelExponentDown;
-    } else {
-        newScale /= wheelExponentUp;
+        newScale *= qPow(wheelExponentDown, eventDelta / 120.0);
+    } else if (eventDelta < 0) {
+        newScale /= qPow(wheelExponentUp, -eventDelta / 120.0);
     }
     cameraScale(newScale);
 
