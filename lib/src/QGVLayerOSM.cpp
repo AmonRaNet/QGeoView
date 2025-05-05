@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2024 Andrey Yaroshenko.
+ * Copyright (C) 2018-2025 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by

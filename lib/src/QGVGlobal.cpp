@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2024 Andrey Yaroshenko.
+ * Copyright (C) 2018-2025 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -156,6 +156,16 @@ QString GeoPos::latToString(double lat, const QString& format)
     return result;
 }
 
+bool GeoPos::operator==(const GeoPos& rhs)
+{
+    return (mEmpty && rhs.mEmpty) || (mLat == rhs.mLat && mLon == rhs.mLon);
+}
+
+bool GeoPos::operator!=(const GeoPos& rhs)
+{
+    return !(*this == rhs);
+}
+
 GeoRect::GeoRect()
 {
 }
@@ -202,7 +212,7 @@ double GeoRect::lonLeft() const
     return mTopLeft.longitude();
 }
 
-double GeoRect::lonRigth() const
+double GeoRect::lonRight() const
 {
     return mBottomRight.longitude();
 }
@@ -219,13 +229,13 @@ double GeoRect::latTop() const
 
 bool GeoRect::contains(GeoPos const& pos) const
 {
-    return (lonLeft() <= pos.longitude() && pos.longitude() < lonRigth() && latBottom() < pos.latitude() &&
+    return (lonLeft() <= pos.longitude() && pos.longitude() < lonRight() && latBottom() < pos.latitude() &&
             pos.latitude() <= latTop());
 }
 
 bool GeoRect::contains(GeoRect const& rect) const
 {
-    return (lonLeft() <= rect.lonLeft() && rect.lonRigth() <= lonRigth() && latBottom() <= rect.latBottom() &&
+    return (lonLeft() <= rect.lonLeft() && rect.lonRight() <= lonRight() && latBottom() <= rect.latBottom() &&
             rect.latTop() <= latTop());
 }
 
@@ -234,6 +244,16 @@ bool GeoRect::intersects(const GeoRect& rect) const
     return contains(rect.topLeft()) || contains(rect.topRight()) || contains(rect.bottomLeft()) ||
            contains(rect.bottomRight()) || rect.contains(topLeft()) || rect.contains(topRight()) ||
            rect.contains(bottomLeft()) || rect.contains(bottomRight());
+}
+
+bool GeoRect::operator==(const GeoRect& rhs)
+{
+    return mTopLeft == rhs.mTopLeft && mBottomRight == rhs.mBottomRight;
+}
+
+bool GeoRect::operator!=(const GeoRect& rhs)
+{
+    return !(*this == rhs);
 }
 
 GeoTilePos::GeoTilePos()

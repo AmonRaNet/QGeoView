@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2024 Andrey Yaroshenko.
+ * Copyright (C) 2018-2025 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -121,6 +121,9 @@ public:
     static QString lonToString(double lon, const QString& format = "[+-]d");
     static QString latToString(double lat, const QString& format = "[+-]d");
 
+    bool operator==(const GeoPos& rhs);
+    bool operator!=(const GeoPos& rhs);
+
 private:
     bool mEmpty;
     double mLat;
@@ -141,13 +144,16 @@ public:
     GeoPos bottomLeft() const;
     GeoPos bottomRight() const;
     double lonLeft() const;
-    double lonRigth() const;
+    double lonRight() const;
     double latBottom() const;
     double latTop() const;
 
     bool contains(GeoPos const& pos) const;
     bool contains(GeoRect const& rect) const;
     bool intersects(GeoRect const& rect) const;
+
+    bool operator==(const GeoRect& rhs);
+    bool operator!=(const GeoRect& rhs);
 
 private:
     GeoPos mTopLeft;

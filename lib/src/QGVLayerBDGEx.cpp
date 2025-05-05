@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2024 Andrey Yaroshenko.
+ * Copyright (C) 2018-2025 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,13 +23,13 @@
 namespace {
 // clang-format off
 const QStringList URLTemplates = {
-    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm25&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRigth,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
-    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm50&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRigth,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
-    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm100&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRigth,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
-    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm250&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRigth,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
-    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm250&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRigth,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
-    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctmmultiescalas&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRigth,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
-    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctmmultiescalas_mercator&srs=EPSG%3A3857&bbox=lonLeft,latBottom,lonRigth,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng"
+    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm25&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRight,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
+    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm50&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRight,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
+    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm100&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRight,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
+    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm250&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRight,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
+    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctm250&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRight,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
+    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctmmultiescalas&srs=EPSG%3A4326&bbox=lonLeft,latBottom,lonRight,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng",
+    "http://bdgex.eb.mil.br/mapcache?request=GetMap&service=WMS&version=1.1.1&layers=ctmmultiescalas_mercator&srs=EPSG%3A3857&bbox=lonLeft,latBottom,lonRight,latTop&width=WIDTH&height=HEIGHT&format=image%2Fpng"
 };
 // clang-format on
 }
@@ -74,9 +74,9 @@ QString QGVLayerBDGEx::tilePosToUrl(const QGV::GeoTilePos& tilePos) const
     QGV::GeoRect rect = tilePos.toGeoRect();
     url.replace("lonLeft", QString::number(rect.lonLeft(), 'f', 6));
     url.replace("latBottom", QString::number(rect.latBottom(), 'f', 6));
-    url.replace("lonRigth", QString::number(rect.lonRigth(), 'f', 6));
+    url.replace("lonRight", QString::number(rect.lonRight(), 'f', 6));
     url.replace("latTop", QString::number(rect.latTop(), 'f', 6));
-    double m_width = rect.lonRigth() - rect.lonLeft();
+    double m_width = rect.lonRight() - rect.lonLeft();
     double m_height = rect.latTop() - rect.latBottom();
     double ratio = m_width / m_height;
     int width_pixels = 900;

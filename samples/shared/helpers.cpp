@@ -1,6 +1,6 @@
 /***************************************************************************
  * QGeoView is a Qt / C ++ widget for visualizing geographic data.
- * Copyright (C) 2018-2024 Andrey Yaroshenko.
+ * Copyright (C) 2018-2025 Andrey Yaroshenko.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -51,7 +51,7 @@ QGV::GeoRect Helpers::randRect(QGVMap* geoMap, const QGV::GeoRect& targetArea)
 QGV::GeoPos Helpers::randPos(const QGV::GeoRect& targetArea)
 {
     const double latRange = targetArea.latTop() - targetArea.latBottom();
-    const double lonRange = targetArea.lonRigth() - targetArea.lonLeft();
+    const double lonRange = targetArea.lonRight() - targetArea.lonLeft();
     static const int range = 1000;
 
     return { targetArea.latBottom() + latRange * (randomInt(0, range)) / range,
