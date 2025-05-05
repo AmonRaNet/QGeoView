@@ -101,7 +101,7 @@ QPixmap MainWindow::createQGVImage() const
 QGVLayer* MainWindow::createQGVLayer() const
 {
     const auto target = targetQGVArea();
-    const auto sizeLon = target.lonLeft() - target.lonRigth();
+    const auto sizeLon = target.lonLeft() - target.lonRight();
     const auto sizeLat = target.latTop() - target.latBottom();
 
     /*
