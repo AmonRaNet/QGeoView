@@ -115,11 +115,11 @@ public:
     void setLat(double late);
     void setLon(double lon);
 
-    QString lonToString(const QString& format = "[+-]d") const;
-    QString latToString(const QString& format = "[+-]d") const;
+    QString lonToString(const QString& format = QStringLiteral("[+-]d")) const;
+    QString latToString(const QString& format = QStringLiteral("[+-]d")) const;
 
-    static QString lonToString(double lon, const QString& format = "[+-]d");
-    static QString latToString(double lat, const QString& format = "[+-]d");
+    static QString lonToString(double lon, const QString& format = QStringLiteral("[+-]d"));
+    static QString latToString(double lat, const QString& format = QStringLiteral("[+-]d"));
 
     bool operator==(const GeoPos& rhs);
     bool operator!=(const GeoPos& rhs);
