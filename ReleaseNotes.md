@@ -1,7 +1,19 @@
 # Release Notes
 
-- Parametrized QT version
-- New distance units (scale widget)
+
+## v1.1.0
+
+- Added adjustable performance model for QGVLayerTilesOnline
+- Added basic raster objects: image, icon
+- Added support for drag and drop (thanks to leonardooyama)
+- Added example for GDAL (thanks to Transporter)
+- Added BDGEx as source for backround maps (thanks to Leonardo Seiji Oyama)
+- Added mapMousePress signal and mousePressEvent override (thanks to Michele Santucci)
+- Added new distance units for scale widget
+- Fully rewritten demo sources, to have "one project" for "one demo case"
+- Fixes and improvements for CMake (thanks to Andreas Bachlechner, Transporter)
+- Fixed zoom behavior for high-resolution touchpads (thanks to Nikita Kirillov)
+- Few other minor fixes and improvements (thanks to gbabin, Jihadist and others)
 
 ## v1.0.4
 

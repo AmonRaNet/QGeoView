@@ -79,6 +79,12 @@ For additional help, join in the [AmonRaNet Discord](https://discord.gg/bxYJsrkB
 
 **bakerb845** for helping with Qt6 adaptation
 **raffmont** for adding new features and capabilities
+**leonardooyama** for support of drag and drop
+**Transporter** for GDAL example and CMake fixes
+**Andreas Bachlechner** for CMake fixes
+**Leonardo Seiji Oyama** for new backround map sources
+
+and
 
 all others who helps and supports QGeoView!
 
