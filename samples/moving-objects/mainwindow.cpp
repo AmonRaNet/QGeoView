@@ -33,6 +33,10 @@ MainWindow::MainWindow()
     mMap = new QGVMap(this);
     setCentralWidget(mMap);
 
+    // fix leaving residuals when dragging the map rapidly
+    mMap->geoView()->setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::FullViewportUpdate);
+    mMap->geoView()->setCacheMode(QGraphicsView::CacheModeFlag::CacheBackground);
+
     Helpers::setupCachedNetworkAccessManager(this);
 
     // Background layer
