@@ -25,6 +25,7 @@
 #include <placemarkcircle.h>
 
 #include <QGeoView/QGVLayerOSM.h>
+#include <QGeoView/QGVMapQGView.h>
 
 MainWindow::MainWindow()
 {

@@ -41,7 +41,7 @@ QGV::GeoRect Helpers::randRect(QGVMap* geoMap, const QGV::GeoRect& targetArea, i
     return randRect(geoMap, targetArea, size);
 }
 
-QGV::GeoRect Helpers::randRect(QGVMap* geoMap, const QGV::GeoRect& targetArea)
+QGV::GeoRect Helpers::randRect(QGVMap* /*geoMap*/, const QGV::GeoRect& targetArea)
 {
     const auto baseGeo1 = randPos(targetArea);
     const auto baseGeo2 = randPos(targetArea);
