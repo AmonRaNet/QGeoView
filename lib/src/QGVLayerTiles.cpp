@@ -24,6 +24,7 @@
 QGVLayerTiles::QGVLayerTiles()
 {
     mCurZoom = -1;
+    mTileGeoOffset = QGV::GeoPos(0.0, 0.0);
     sendToBack();
 }
 
@@ -61,6 +62,33 @@ void QGVLayerTiles::setCameraUpdatesDuringAnimation(bool value)
 {
     mPerfomanceProfile.CameraUpdatesDuringAnimation = value;
     qgvDebug() << "CameraUpdatesDuringAnimation changed to" << value;
+}
+
+QGV::GeoTilePos QGVLayerTiles::geoPosToTilePos(int zoom, const QGV::GeoPos& geoPos) const{
+    return QGV::GeoTilePos::geoToTilePos(
+            zoom,
+            QGV::GeoPos(
+                    geoPos.latitude() + mTileGeoOffset.latitude(),
+                    geoPos.longitude() + mTileGeoOffset.longitude())
+            );
+}
+
+QGV::GeoRect QGVLayerTiles::tilePosToGeoRect(const QGV::GeoTilePos& tilePos) const{
+    auto r = tilePos.toGeoRect();
+    return QGV::GeoRect(
+            r.latTop() - mTileGeoOffset.latitude(),
+            r.lonLeft() - mTileGeoOffset.longitude(),
+            r.latBottom() - mTileGeoOffset.latitude(),
+            r.lonRight() - mTileGeoOffset.longitude()
+            );
+}
+
+QGV::GeoPos QGVLayerTiles::tileGeoOffset() const{
+    return mTileGeoOffset;
+}
+
+void QGVLayerTiles::setTileGeoOffset(const QGV::GeoPos &offset){
+    mTileGeoOffset = offset;
 }
 
 void QGVLayerTiles::onProjection(QGVMap* geoMap)
@@ -163,8 +191,8 @@ void QGVLayerTiles::processCamera()
                                      : static_cast<int>(mPerfomanceProfile.TilesMarginNoZoomChange);
     const int sizePerZoom = static_cast<int>(qPow(2, mCurZoom));
     const QRect maxRect = QRect(QPoint(0, 0), QPoint(sizePerZoom, sizePerZoom));
-    const QPoint topLeft = QGV::GeoTilePos::geoToTilePos(mCurZoom, areaGeoRect.topLeft()).pos();
-    const QPoint bottomRight = QGV::GeoTilePos::geoToTilePos(mCurZoom, areaGeoRect.bottomRight()).pos();
+    const QPoint topLeft = geoPosToTilePos(mCurZoom, areaGeoRect.topLeft()).pos();
+    const QPoint bottomRight = geoPosToTilePos(mCurZoom, areaGeoRect.bottomRight()).pos();
     QRect activeRect = QRect(topLeft, bottomRight);
     activeRect = activeRect.adjusted(-margin, -margin, margin, margin);
     activeRect = activeRect.intersected(maxRect);

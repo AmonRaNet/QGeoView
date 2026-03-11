@@ -71,7 +71,7 @@ int QGVLayerBDGEx::maxZoomlevel() const
 QString QGVLayerBDGEx::tilePosToUrl(const QGV::GeoTilePos& tilePos) const
 {
     QString url = mUrl;
-    QGV::GeoRect rect = tilePos.toGeoRect();
+    QGV::GeoRect rect = tilePosToGeoRect(tilePos);
     url.replace("lonLeft", QString::number(rect.lonLeft(), 'f', 6));
     url.replace("latBottom", QString::number(rect.latBottom(), 'f', 6));
     url.replace("lonRight", QString::number(rect.lonRight(), 'f', 6));

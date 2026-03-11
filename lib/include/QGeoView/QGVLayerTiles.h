@@ -36,6 +36,18 @@ public:
     void setVisibleZoomLayersAboveCurrent(size_t value);
     void setCameraUpdatesDuringAnimation(bool value);
 
+    QGV::GeoTilePos geoPosToTilePos(int zoom, const QGV::GeoPos& geoPos) const;
+    QGV::GeoRect tilePosToGeoRect(const QGV::GeoTilePos& tilePos) const;
+
+    QGV::GeoPos tileGeoOffset() const;
+
+    /**
+     * @brief Set tile map offset
+     * @param offset
+     */
+    void setTileGeoOffset(const QGV::GeoPos &offset);
+
+
 protected:
     void onProjection(QGVMap* geoMap) override;
     void onCamera(const QGVCameraState& oldState, const QGVCameraState& newState) override;
@@ -66,6 +78,8 @@ private:
     QMap<int, QMap<QGV::GeoTilePos, QGVDrawItem*>> mIndex;
 
     QElapsedTimer mLastAnimation;
+
+    QGV::GeoPos mTileGeoOffset;
 
     struct
     {

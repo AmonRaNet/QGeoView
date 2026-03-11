@@ -66,7 +66,7 @@ void QGVLayerTilesOnline::onReplyFinished(QNetworkReply* reply, const QGV::GeoTi
     }
     const auto rawImage = reply->readAll();
     auto tile = new QGVImage();
-    tile->setGeometry(tilePos.toGeoRect());
+    tile->setGeometry(tilePosToGeoRect(tilePos));
     tile->loadImage(rawImage);
     tile->setProperty("drawDebug",
                       QString("%1\ntile(%2,%3,%4)")

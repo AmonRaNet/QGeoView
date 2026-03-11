@@ -35,6 +35,10 @@ MainWindow::MainWindow()
 
     // Background layer
     auto osmLayer = new QGVLayerOSM();
+
+    // Optional, set OSM tile offset
+    // osmLayer->setTileGeoOffset(QGV::GeoPos(-0.0004, 0.0005));
+
     mMap->addItem(osmLayer);
 
     // Custom tile layer
