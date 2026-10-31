@@ -57,8 +57,13 @@ void QGVLayerTilesOnline::cancel(const QGV::GeoTilePos& tilePos)
 
 void QGVLayerTilesOnline::onReplyFinished(QNetworkReply* reply, const QGV::GeoTilePos& tilePos)
 {
-    if (reply->error() != QNetworkReply::NoError) {
-        if (reply->error() != QNetworkReply::OperationCanceledError) {
+    if (reply->error() == QNetworkReply::NoError) {
+        Q_EMIT tileReplySuccess(reply->attribute(QNetworkRequest::SourceIsFromCacheAttribute).toBool());
+    } else {
+        if (reply->error() == QNetworkReply::OperationCanceledError) {
+            Q_EMIT tileReplyCanceled();
+        } else {
+            Q_EMIT tileReplyError(reply->error());
             qgvCritical() << "ERROR" << reply->errorString();
         }
         removeReply(tilePos);
