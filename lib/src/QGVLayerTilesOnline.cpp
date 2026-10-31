@@ -39,6 +39,7 @@ void QGVLayerTilesOnline::request(const QGV::GeoTilePos& tilePos)
                          "Mozilla/5.0 (Windows; U; MSIE "
                          "6.0; Windows NT 5.1; SV1; .NET "
                          "CLR 2.0.50727)");
+    request.setRawHeader("Accept", "*/*");
     request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
 
