@@ -66,7 +66,7 @@ int QGVLayerOSM::maxZoomlevel() const
 
 QString QGVLayerOSM::tilePosToUrl(const QGV::GeoTilePos& tilePos) const
 {
-    QString url = mUrl.toLower();
+    QString url = mUrl;
     url.replace("${z}", QString::number(tilePos.zoom()));
     url.replace("${x}", QString::number(tilePos.pos().x()));
     url.replace("${y}", QString::number(tilePos.pos().y()));
