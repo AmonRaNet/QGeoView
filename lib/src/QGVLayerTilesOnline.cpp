@@ -31,14 +31,11 @@ void QGVLayerTilesOnline::request(const QGV::GeoTilePos& tilePos)
     const QUrl url(tilePosToUrl(tilePos));
 
     QNetworkRequest request(url);
-    QSslConfiguration conf = request.sslConfiguration();
-    conf.setPeerVerifyMode(QSslSocket::VerifyNone);
-
-    request.setSslConfiguration(conf);
     request.setRawHeader("User-Agent",
                          "Mozilla/5.0 (Windows; U; MSIE "
                          "6.0; Windows NT 5.1; SV1; .NET "
                          "CLR 2.0.50727)");
+    request.setRawHeader("Accept", "*/*");
     request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
 
