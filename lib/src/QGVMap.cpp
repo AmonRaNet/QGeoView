@@ -209,6 +209,7 @@ void QGVMap::select(QGVItem* item)
     item->select();
     if (item->isSelected()) {
         mSelections.insert(item);
+        Q_EMIT selectionsChanged();
     }
 }
 
@@ -217,6 +218,7 @@ void QGVMap::unselect(QGVItem* item)
     item->unselect();
     if (!item->isSelected()) {
         mSelections.remove(item);
+        Q_EMIT selectionsChanged();
     }
 }
 

@@ -32,6 +32,11 @@ public:
 protected:
     virtual QString tilePosToUrl(const QGV::GeoTilePos& tilePos) const = 0;
 
+Q_SIGNALS:
+    void tileReplySuccess(bool fromCache);
+    void tileReplyCanceled();
+    void tileReplyError(QNetworkReply::NetworkError error);
+
 private:
     void request(const QGV::GeoTilePos& tilePos) override;
     void cancel(const QGV::GeoTilePos& tilePos) override;

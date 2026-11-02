@@ -98,6 +98,7 @@ Q_SIGNALS:
     void scaleChanged();
     void azimuthChanged();
     void areaChanged();
+    void selectionsChanged();
     void itemsChanged(QGVItem* parent);
     void stateChanged(QGV::MapState state);
     void itemClicked(QGVItem* item, QPointF projPos);
